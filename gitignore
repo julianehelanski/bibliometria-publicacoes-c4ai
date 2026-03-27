@@ -1,0 +1,28 @@
+# dados brutos — não versionar
+*.xlsx
+*.xls
+*.csv
+
+# saídas geradas
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+env/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
