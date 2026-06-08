@@ -157,16 +157,19 @@ def parse_publications(csv_text: str) -> pd.DataFrame:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def export_excel(df: pd.DataFrame, output: str) -> None:
-    """Grava uma planilha consolidada + uma planilha por grupo."""
+    """Grava os dados numa única planilha consolidada.
+
+    ``analise_publicacoes`` lê TODAS as planilhas do arquivo e as concatena,
+    usando a coluna ``Grupo`` para agrupar. Por isso gravamos apenas uma
+    planilha (``Planilha1``): escrever também uma por grupo duplicaria cada
+    publicação e dobraria todas as contagens.
+    """
     if df.empty:
         raise SystemExit("[ERRO] DataFrame vazio — nada a exportar.")
 
     out = Path(output)
     with pd.ExcelWriter(out, engine="openpyxl") as writer:
-        # Planilha consolidada primeiro (compatível com SHEET_MAP['Planilha1'])
         df.to_excel(writer, sheet_name="Planilha1", index=False)
-        for i, (_grupo, sub) in enumerate(df.groupby("Grupo de Pesquisa"), start=2):
-            sub.to_excel(writer, sheet_name=f"Planilha{i}"[:31], index=False)
 
     anos = df["Data de publicação"]
     print(f"\n  ✓  {len(df)} publicações gravadas em: {out}")
