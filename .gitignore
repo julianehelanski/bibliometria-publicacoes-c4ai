@@ -5,10 +5,7 @@ __pycache__/
 .venv/
 venv/
 
-# Saídas geradas pela análise
-output/
-
-# HTML bruto baixado pelo scraper
+# HTML/CSV bruto baixado pelo scraper
 *.dump.html
 pagina.html
 

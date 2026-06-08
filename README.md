@@ -6,6 +6,17 @@ Análise exploratória da produção acadêmica dos grupos de pesquisa do **Cent
 
 ---
 
+## 📊 Relatório
+
+A análise completa, com as nove figuras, legendas e o inventário de visualizações, está disponível em:
+
+- **[`RELATORIO.md`](RELATORIO.md)** — relatório bibliométrico em Markdown (renderiza direto no GitHub), com inventário de figuras.
+- **[`documento_analise.tex`](documento_analise.tex)** — versão tipografada em LaTeX (compilar com `pdflatex documento_analise.tex`).
+
+**Resumo:** 413 publicações · 8 grupos · 2020–2024 · líder NLP2 (144 pubs) · pico em 2023 (199) · HHI 1975 (moderado).
+
+---
+
 ## Instalação
 
 ```bash
@@ -22,7 +33,20 @@ pip install -r requirements.txt
 
 ## Uso
 
-Coloque o arquivo `c4ai_publicacoes_py.xlsx` na raiz do repositório e execute:
+### 1. Coleta dos dados (scraper)
+
+Baixa as publicações diretamente da base oficial do C4AI e gera o `c4ai_publicacoes_py.xlsx`:
+
+```bash
+python scrape_c4ai.py                 # coleta em português (padrão)
+python scrape_c4ai.py --lang en       # versão em inglês
+```
+
+> O scraper acessa `resources/publicacoes.csv` (carregado dinamicamente pela página), consolida as variantes do grupo de saúde sob `AI HEALTH` e grava cada publicação uma única vez.
+
+### 2. Análise
+
+Com o arquivo `c4ai_publicacoes_py.xlsx` na raiz do repositório, execute:
 
 ```bash
 # execução padrão — gráficos + tabelas em output/
@@ -49,11 +73,15 @@ python analyze.py --no-plots
 
 ```
 c4ai-publications/
-├── analyze.py            # script principal
+├── scrape_c4ai.py        # coleta dos dados (gera c4ai_publicacoes_py.xlsx)
+├── analise_publicacoes   # script de análise principal
+├── documento_analise.tex # relatório em LaTeX
+├── RELATORIO.md          # relatório em Markdown (com inventário de figuras)
 ├── requirements.txt
 ├── .gitignore
 ├── README.md
-└── output/               # gerado automaticamente (ignorado pelo git)
+├── figuras/              # figuras usadas no relatório
+└── output/               # gerado automaticamente pela análise
     ├── 1_ranking_grupos.png
     ├── 2_pizza_grupos.png
     ├── 3_evolucao_temporal_geral.png
