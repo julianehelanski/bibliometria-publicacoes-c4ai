@@ -67,6 +67,14 @@ COL_MAP = {
     "Category":  "Tipo_Publicacao",
 }
 
+# O grupo de saúde aparece grafado de várias formas no CSV da USP
+# ("AL HEALTH" é um typo de "AI HEALTH"; "HEALTH" é uma abreviação). Tudo isso
+# é o mesmo grupo de pesquisa e deve ser consolidado sob um único rótulo.
+GROUP_NORMALIZE = {
+    "AL HEALTH": "AI HEALTH",
+    "HEALTH":    "AI HEALTH",
+}
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Download
@@ -130,6 +138,14 @@ def parse_publications(csv_text: str) -> pd.DataFrame:
     )
     df.columns = df.columns.str.strip().str.lstrip("﻿")
     df.rename(columns={c: COL_MAP[c] for c in df.columns if c in COL_MAP}, inplace=True)
+
+    # Normaliza variações do mesmo grupo (ex.: AL HEALTH / HEALTH → AI HEALTH)
+    if "Grupo de Pesquisa" in df.columns:
+        df["Grupo de Pesquisa"] = (
+            df["Grupo de Pesquisa"].str.strip()
+            .replace({k.upper(): v for k, v in GROUP_NORMALIZE.items()})
+            .replace(GROUP_NORMALIZE)
+        )
 
     # Limpeza de campos textuais (a "Descrição" traz <a> embutidos)
     if "Título" in df.columns:
