@@ -3,3 +3,5 @@ matplotlib>=3.7
 seaborn>=0.13
 numpy>=1.24
 openpyxl>=3.1        # leitura/escrita de .xlsx
+requests>=2.31       # raspagem (scrape_c4ai.py)
+beautifulsoup4>=4.12 # parsing HTML (scrape_c4ai.py)
