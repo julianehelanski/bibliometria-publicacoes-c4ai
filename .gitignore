@@ -8,9 +8,10 @@ venv/
 # Saídas geradas pela análise
 output/
 
-# HTML bruto baixado pelo scraper
+# HTML/CSV bruto e Excel gerado pelo scraper
 *.dump.html
 pagina.html
+c4ai_publicacoes_py.xlsx
 
 # Sistema
 .DS_Store

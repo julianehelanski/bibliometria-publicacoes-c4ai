@@ -2,17 +2,26 @@
 """
 scrape_c4ai.py — Raspagem das publicações do C4AI (USP)
 =======================================================
-Coleta os dados da página de recursos/publicações do C4AI e grava um arquivo
-Excel no mesmo formato esperado por ``analise_publicacoes`` (uma planilha por
-grupo, com as colunas ``Grupo de Pesquisa``, ``Data de publicação``, ``Título``
-e, quando disponível, ``Autores``).
+A página ``resources.html`` do C4AI é renderizada por JavaScript: o HTML
+estático não contém as publicações. O ``js/resource.js`` carrega os dados de um
+arquivo **CSV** (delimitado por ``;``) e popula uma tabela DataTables via
+PapaParse. Este script vai direto à fonte — baixa esse CSV — e grava um Excel no
+formato esperado por ``analise_publicacoes`` (uma planilha por grupo, mais uma
+planilha consolidada ``Planilha1``).
+
+Fontes de dados (descobertas em js/resource.js):
+    pt → https://c4ai.inova.usp.br/resources/publicacoes.csv
+    en → https://c4ai.inova.usp.br/resources/publications.csv
+
+Colunas do CSV: id ; Grupo ; Categoria ; Autores ; Descrição ; Ano
 
 Uso:
-    python scrape_c4ai.py                                   # arquivo padrão
-    python scrape_c4ai.py --url https://c4ai.inova.usp.br/resources.html
+    python scrape_c4ai.py                                   # arquivo padrão (pt)
+    python scrape_c4ai.py --lang en
+    python scrape_c4ai.py --csv-url https://c4ai.inova.usp.br/resources/publicacoes.csv
     python scrape_c4ai.py --output c4ai_publicacoes_py.xlsx
-    python scrape_c4ai.py --dump-html pagina.html           # salva o HTML bruto
-    python scrape_c4ai.py --inspect                         # só inspeciona a estrutura
+    python scrape_c4ai.py --from-file publicacoes.csv       # parseia um CSV local
+    python scrape_c4ai.py --dump-csv publicacoes.csv        # salva o CSV bruto
 
 Observação sobre rede:
     No Claude Code na web o acesso a ``c4ai.inova.usp.br`` precisa estar na
@@ -22,15 +31,18 @@ Observação sobre rede:
 """
 
 import argparse
-import sys
-from collections import defaultdict
+import io
+import re
 from pathlib import Path
 
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
 
-DEFAULT_URL = "https://c4ai.inova.usp.br/resources.html"
+BASE_URL = "https://c4ai.inova.usp.br"
+CSV_PATHS = {
+    "pt": f"{BASE_URL}/resources/publicacoes.csv",
+    "en": f"{BASE_URL}/resources/publications.csv",
+}
 DEFAULT_OUTPUT = "c4ai_publicacoes_py.xlsx"
 
 HEADERS = {
@@ -41,26 +53,27 @@ HEADERS = {
     "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
 }
 
-# Grupos de pesquisa conhecidos do C4AI (usados para classificar publicações
-# quando o grupo não vem explícito no marcador da página).
-GRUPOS_CONHECIDOS = [
-    "AI HEALTH",
-    "Agribio",
-    "KEML",
-    "MClimate",
-    "NLP2",
-    "OceanML",
-    "PROINDL",
-    "HUMANITIES",
-]
+# Mapeia os cabeçalhos do CSV (pt/en) para os nomes esperados pela análise.
+COL_MAP = {
+    "Grupo":     "Grupo de Pesquisa",
+    "Group":     "Grupo de Pesquisa",
+    "Ano":       "Data de publicação",
+    "Year":      "Data de publicação",
+    "Descrição": "Título",
+    "Description": "Título",
+    "Autores":   "Autores",
+    "Authors":   "Autores",
+    "Categoria": "Tipo_Publicacao",
+    "Category":  "Tipo_Publicacao",
+}
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Download
 # ──────────────────────────────────────────────────────────────────────────────
 
-def fetch_html(url: str, timeout: int = 30) -> str:
-    """Baixa o HTML da página. Levanta erro amigável em caso de bloqueio."""
+def fetch_csv(url: str, timeout: int = 30) -> str:
+    """Baixa o CSV. Levanta erro amigável em caso de bloqueio de rede."""
     resp = requests.get(url, headers=HEADERS, timeout=timeout)
     if resp.status_code == 403 and "host_not_allowed" in resp.headers.get("x-deny-reason", ""):
         raise SystemExit(
@@ -73,112 +86,70 @@ def fetch_html(url: str, timeout: int = 30) -> str:
     return resp.text
 
 
-def load_html(args) -> str:
-    """Carrega HTML de arquivo local (--from-file) ou da rede."""
+def load_csv_text(args) -> str:
+    """Carrega o texto do CSV de arquivo local (--from-file) ou da rede."""
     if args.from_file:
-        return Path(args.from_file).read_text(encoding="utf-8", errors="replace")
-    html = fetch_html(args.url)
-    if args.dump_html:
-        Path(args.dump_html).write_text(html, encoding="utf-8")
-        print(f"  ✓  HTML bruto salvo em: {args.dump_html}")
-    return html
+        return Path(args.from_file).read_text(encoding="utf-8-sig", errors="replace")
+    csv_url = args.csv_url or CSV_PATHS[args.lang]
+    print(f"Carregando: {csv_url}")
+    text = fetch_csv(csv_url)
+    if args.dump_csv:
+        Path(args.dump_csv).write_text(text, encoding="utf-8")
+        print(f"  ✓  CSV bruto salvo em: {args.dump_csv}")
+    return text
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Inspeção de estrutura  (use --inspect para entender a página antes de parsear)
+# Parsing
 # ──────────────────────────────────────────────────────────────────────────────
 
-def inspect_structure(html: str) -> None:
-    soup = BeautifulSoup(html, "html.parser")
-    print("\n=== TÍTULO DA PÁGINA ===")
-    print(soup.title.get_text(strip=True) if soup.title else "(sem <title>)")
-
-    print("\n=== CONTAGEM DE TAGS RELEVANTES ===")
-    for tag in ["section", "article", "div", "li", "table", "tr", "h1", "h2", "h3", "h4", "p", "a"]:
-        print(f"  {tag:8s}: {len(soup.find_all(tag))}")
-
-    print("\n=== CLASSES MAIS COMUNS ===")
-    classes = defaultdict(int)
-    for el in soup.find_all(True):
-        for c in el.get("class", []):
-            classes[c] += 1
-    for c, n in sorted(classes.items(), key=lambda kv: -kv[1])[:30]:
-        print(f"  {n:4d}  .{c}")
-
-    print("\n=== CABEÇALHOS (h1–h4) ===")
-    for h in soup.find_all(["h1", "h2", "h3", "h4"]):
-        print(f"  <{h.name}> {h.get_text(' ', strip=True)[:90]}")
-
-    print("\n[dica] Use estas classes/tags para ajustar parse_publications().")
+_TAG_RE = re.compile(r"<[^>]+>")
+_WS_RE = re.compile(r"\s+")
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Parsing  (AJUSTAR conforme a estrutura real revelada por --inspect)
-# ──────────────────────────────────────────────────────────────────────────────
+def _strip_html(value) -> str:
+    """Remove marcação HTML (links etc.) e normaliza espaços."""
+    if pd.isna(value):
+        return ""
+    text = _TAG_RE.sub(" ", str(value))
+    return _WS_RE.sub(" ", text).strip()
 
-def parse_publications(html: str) -> pd.DataFrame:
+
+def parse_publications(csv_text: str) -> pd.DataFrame:
+    """Lê o CSV (delimitado por ';') e devolve o DataFrame no formato da análise.
+
+    Colunas de saída:
+        Grupo de Pesquisa | Data de publicação | Título | Autores | Tipo_Publicacao
     """
-    Extrai as publicações da página.
+    df = pd.read_csv(
+        io.StringIO(csv_text),
+        sep=";",
+        dtype=str,
+        keep_default_na=False,
+        engine="python",
+    )
+    df.columns = df.columns.str.strip().str.lstrip("﻿")
+    df.rename(columns={c: COL_MAP[c] for c in df.columns if c in COL_MAP}, inplace=True)
 
-    ⚠️  Esta função é um ESQUELETO genérico. A estrutura exata do HTML do C4AI
-        precisa ser confirmada com ``--inspect`` (ou ``--dump-html``). Ajuste os
-        seletores abaixo de acordo com as classes/tags reais da página.
+    # Limpeza de campos textuais (a "Descrição" traz <a> embutidos)
+    if "Título" in df.columns:
+        df["Título"] = df["Título"].map(_strip_html)
+    if "Autores" in df.columns:
+        df["Autores"] = df["Autores"].map(_strip_html)
 
-    Retorna um DataFrame com as colunas:
-        Grupo de Pesquisa | Data de publicação | Título | Autores
-    """
-    soup = BeautifulSoup(html, "html.parser")
-    registros = []
+    # Ano numérico; descarta linhas sem ano válido
+    if "Data de publicação" in df.columns:
+        df["Data de publicação"] = pd.to_numeric(df["Data de publicação"], errors="coerce")
+        df = df.dropna(subset=["Data de publicação"]).copy()
+        df["Data de publicação"] = df["Data de publicação"].astype(int)
 
-    grupo_atual = "Não identificado"
+    cols = [c for c in ["Grupo de Pesquisa", "Data de publicação", "Título",
+                        "Autores", "Tipo_Publicacao"] if c in df.columns]
+    df = df[cols].reset_index(drop=True)
 
-    # Estratégia genérica: percorre o documento na ordem; cabeçalhos definem o
-    # grupo corrente; itens de lista / parágrafos / linhas de tabela viram
-    # publicações. AJUSTE os seletores após inspecionar a página real.
-    for el in soup.find_all(["h1", "h2", "h3", "h4", "li", "tr", "p"]):
-        texto = el.get_text(" ", strip=True)
-        if not texto:
-            continue
-
-        # Cabeçalho que casa com um grupo conhecido → atualiza o contexto
-        if el.name in ("h1", "h2", "h3", "h4"):
-            for g in GRUPOS_CONHECIDOS:
-                if g.lower() in texto.lower():
-                    grupo_atual = g
-                    break
-            continue
-
-        # Heurística mínima: linhas muito curtas provavelmente não são publicações
-        if len(texto) < 15:
-            continue
-
-        ano = _extrair_ano(texto)
-        autores = _extrair_autores(el)
-
-        registros.append({
-            "Grupo de Pesquisa":  grupo_atual,
-            "Data de publicação": ano,
-            "Título":             texto,
-            "Autores":            autores,
-        })
-
-    df = pd.DataFrame(registros)
     if df.empty:
-        print("[AVISO] Nenhuma publicação extraída — ajuste parse_publications() "
-              "com base na saída de --inspect.")
+        print("[AVISO] Nenhuma publicação extraída do CSV.")
     return df
-
-
-def _extrair_ano(texto: str):
-    import re
-    m = re.search(r"\b(20\d{2})\b", texto)
-    return int(m.group(1)) if m else None
-
-
-def _extrair_autores(el):
-    """Tenta achar autores num elemento irmão/filho específico; placeholder."""
-    cand = el.find(class_=lambda c: c and "author" in c.lower()) if hasattr(el, "find") else None
-    return cand.get_text(" ", strip=True) if cand else None
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -186,7 +157,7 @@ def _extrair_autores(el):
 # ──────────────────────────────────────────────────────────────────────────────
 
 def export_excel(df: pd.DataFrame, output: str) -> None:
-    """Grava uma planilha por grupo (Planilha1..N), no formato do projeto."""
+    """Grava uma planilha consolidada + uma planilha por grupo."""
     if df.empty:
         raise SystemExit("[ERRO] DataFrame vazio — nada a exportar.")
 
@@ -194,13 +165,13 @@ def export_excel(df: pd.DataFrame, output: str) -> None:
     with pd.ExcelWriter(out, engine="openpyxl") as writer:
         # Planilha consolidada primeiro (compatível com SHEET_MAP['Planilha1'])
         df.to_excel(writer, sheet_name="Planilha1", index=False)
-        for i, (grupo, sub) in enumerate(df.groupby("Grupo de Pesquisa"), start=2):
-            nome = f"Planilha{i}"
-            sub.to_excel(writer, sheet_name=nome[:31], index=False)
+        for i, (_grupo, sub) in enumerate(df.groupby("Grupo de Pesquisa"), start=2):
+            sub.to_excel(writer, sheet_name=f"Planilha{i}"[:31], index=False)
 
+    anos = df["Data de publicação"]
     print(f"\n  ✓  {len(df)} publicações gravadas em: {out}")
     print(f"  ✓  {df['Grupo de Pesquisa'].nunique()} grupos · "
-          f"anos {df['Data de publicação'].min()}–{df['Data de publicação'].max()}")
+          f"anos {anos.min()}–{anos.max()}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -209,26 +180,21 @@ def export_excel(df: pd.DataFrame, output: str) -> None:
 
 def parse_args():
     p = argparse.ArgumentParser(description="Raspagem das publicações do C4AI (USP)")
-    p.add_argument("--url", default=DEFAULT_URL, help="URL da página de recursos")
+    p.add_argument("--lang", choices=["pt", "en"], default="pt",
+                   help="Idioma do CSV de origem (pt|en)")
+    p.add_argument("--csv-url", help="URL do CSV (sobrepõe --lang)")
     p.add_argument("--output", default=DEFAULT_OUTPUT, help="Arquivo Excel de saída")
-    p.add_argument("--from-file", help="Parsear um HTML local em vez de baixar")
-    p.add_argument("--dump-html", help="Salvar o HTML bruto baixado neste caminho")
-    p.add_argument("--inspect", action="store_true",
-                   help="Apenas inspeciona a estrutura da página (não exporta)")
+    p.add_argument("--from-file", help="Parsear um CSV local em vez de baixar")
+    p.add_argument("--dump-csv", help="Salvar o CSV bruto baixado neste caminho")
     return p.parse_args()
 
 
 def main():
     args = parse_args()
-    print(f"Carregando: {args.from_file or args.url}")
-    html = load_html(args)
+    csv_text = load_csv_text(args)
 
-    if args.inspect:
-        inspect_structure(html)
-        return
-
-    df = parse_publications(html)
-    print(f"\nExtraídas {len(df)} linhas candidatas.")
+    df = parse_publications(csv_text)
+    print(f"\nExtraídas {len(df)} publicações.")
     export_excel(df, args.output)
     print("\nConcluído. Agora rode:  python analise_publicacoes --input "
           f"{args.output}")
