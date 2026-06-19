@@ -159,7 +159,6 @@ def plot_ranking(grupos_dist: pd.Series, total: int, outdir: Path):
     ax.set_yticks(range(len(grupos_dist)))
     ax.set_yticklabels(grupos_dist.index)
     ax.set_xlabel("Número de Publicações", fontweight="bold")
-    ax.set_title("Ranking de Publicações por Grupo de Pesquisa do C4AI", fontweight="bold", fontsize=16, pad=20)
     ax.grid(axis="x", alpha=0.3)
     ax.invert_yaxis()
 
@@ -187,7 +186,6 @@ def plot_pie(grupos_dist: pd.Series, outdir: Path):
         at.set_fontsize(10)
         at.set_fontweight("bold")
 
-    ax.set_title("Distribuição Proporcional de Publicações por Grupo", fontweight="bold", fontsize=16, pad=20)
     plt.tight_layout()
     save(fig, outdir, "2_pizza_grupos.png")
 
@@ -200,14 +198,14 @@ def plot_temporal(pub_ano: pd.Series, outdir: Path):
     bars[list(pub_ano.index).index(ano_max)].set_color("#E74C3C")
     for ano, val in pub_ano.items():
         ax1.text(ano, val + 0.5, str(val), ha="center", va="bottom", fontweight="bold", fontsize=10)
-    ax1.set(title="Evolução Anual de Publicações do C4AI", xlabel="Ano", ylabel="Número de Publicações")
+    ax1.set(xlabel="Ano", ylabel="Número de Publicações")
     ax1.grid(axis="y", alpha=0.3)
 
     ax2.plot(pub_ano.index, pub_ano.values, marker="o", linewidth=3, markersize=10, color="#9B59B6", label="Publicações")
     ax2.fill_between(pub_ano.index, pub_ano.values, alpha=0.3, color="#9B59B6")
     z = np.polyfit(pub_ano.index, pub_ano.values, 1)
     ax2.plot(pub_ano.index, np.poly1d(z)(pub_ano.index), "--", color="red", linewidth=2, alpha=0.7, label="Tendência Linear")
-    ax2.set(title="Tendência de Crescimento do C4AI", xlabel="Ano", ylabel="Número de Publicações")
+    ax2.set(xlabel="Ano", ylabel="Número de Publicações")
     ax2.legend(fontsize=11)
     ax2.grid(True, alpha=0.3)
 
@@ -223,8 +221,7 @@ def plot_heatmap(df: pd.DataFrame, outdir: Path):
         cbar_kws={"label": "Número de Publicações"},
         linewidths=0.5, linecolor="gray", ax=ax,
     )
-    ax.set(title="Mapa de Calor: Publicações por Grupo e Ano", xlabel="Ano", ylabel="Grupo de Pesquisa")
-    ax.set_title(ax.get_title(), fontweight="bold", fontsize=16, pad=20)
+    ax.set(xlabel="Ano", ylabel="Grupo de Pesquisa")
     plt.tight_layout()
     save(fig, outdir, "4_heatmap_grupo_ano.png")
 
@@ -238,8 +235,7 @@ def plot_all_groups_lines(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path
         serie = sub["Ano"].value_counts().sort_index()
         ax.plot(serie.index, serie.values, marker="o", linewidth=2.5, markersize=8, label=grupo, color=cores[i])
 
-    ax.set(title="Evolução Temporal de Todos os Grupos de Pesquisa", xlabel="Ano", ylabel="Número de Publicações")
-    ax.set_title(ax.get_title(), fontweight="bold", fontsize=16, pad=20)
+    ax.set(xlabel="Ano", ylabel="Número de Publicações")
     ax.legend(title="Grupo de Pesquisa", fontsize=10, title_fontsize=11, loc="upper left", framealpha=0.9)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -253,8 +249,7 @@ def plot_productivity(produtividade: pd.DataFrame, outdir: Path):
     ax1.barh(range(len(produtividade)), produtividade["Publicacoes_por_Ano"], color=cores)
     ax1.set_yticks(range(len(produtividade)))
     ax1.set_yticklabels(produtividade["Grupo"])
-    ax1.set(xlabel="Publicações por Ano", title="Taxa de Produtividade por Grupo")
-    ax1.set_title(ax1.get_title(), fontweight="bold", fontsize=14, pad=15)
+    ax1.set(xlabel="Publicações por Ano")
     ax1.grid(axis="x", alpha=0.3)
     ax1.invert_yaxis()
     for i, v in enumerate(produtividade["Publicacoes_por_Ano"]):
@@ -268,9 +263,7 @@ def plot_productivity(produtividade: pd.DataFrame, outdir: Path):
     for _, row in produtividade.iterrows():
         ax2.annotate(row["Grupo"], (row["Anos_Ativos"], row["Total_Publicacoes"]),
                      xytext=(5, 5), textcoords="offset points", fontsize=9, fontweight="bold")
-    ax2.set(xlabel="Anos Ativos", ylabel="Total de Publicações",
-            title="Produção vs Tempo de Atividade\n(tamanho = taxa de produtividade)")
-    ax2.set_title(ax2.get_title(), fontweight="bold", fontsize=14, pad=15)
+    ax2.set(xlabel="Anos Ativos", ylabel="Total de Publicações")
     ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -295,7 +288,6 @@ def plot_top_groups(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path):
     for j in range(len(top), 6):
         axes[j].axis("off")
 
-    plt.suptitle("Evolução Temporal dos Principais Grupos", fontweight="bold", fontsize=16, y=0.995)
     plt.tight_layout()
     save(fig, outdir, "7_comparacao_top_grupos.png")
 
@@ -311,9 +303,7 @@ def plot_stacked(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path):
         ax.bar(anos, vals, bottom=bottom, label=grupo, color=cores[i], edgecolor="white", linewidth=0.5)
         bottom += np.array(vals, dtype=float)
 
-    ax.set(xlabel="Ano", ylabel="Número de Publicações",
-           title="Composição de Publicações por Grupo ao Longo do Tempo")
-    ax.set_title(ax.get_title(), fontweight="bold", fontsize=16, pad=20)
+    ax.set(xlabel="Ano", ylabel="Número de Publicações")
     ax.legend(title="Grupo de Pesquisa", bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=10)
     ax.grid(axis="y", alpha=0.3)
     plt.tight_layout()
@@ -334,8 +324,7 @@ def plot_concentration(grupos_dist: pd.Series, outdir: Path):
     ax1.plot(grupos_acum, freq_acum, marker="o", linewidth=2.5, markersize=8, color="#E74C3C", label="Curva de Lorenz")
     ax1.plot([0, 100], [0, 100], "--", color="gray", linewidth=2, alpha=0.7, label="Igualdade Perfeita")
     ax1.fill_between(grupos_acum, freq_acum, grupos_acum, alpha=0.3, color="#E74C3C")
-    ax1.set(xlabel="% Acumulada de Grupos", ylabel="% Acumulada de Publicações", title="Curva de Concentração de Publicações")
-    ax1.set_title(ax1.get_title(), fontweight="bold", fontsize=14, pad=15)
+    ax1.set(xlabel="% Acumulada de Grupos", ylabel="% Acumulada de Publicações")
     ax1.legend(fontsize=11)
     ax1.grid(True, alpha=0.3)
 
@@ -345,8 +334,7 @@ def plot_concentration(grupos_dist: pd.Series, outdir: Path):
     ax2.axhline(y=80, color="green", linestyle="--", linewidth=2, alpha=0.7, label="80% das publicações")
     ax2.set_xticks(range(len(participacao)))
     ax2.set_xticklabels(participacao.index, rotation=45, ha="right")
-    ax2.set(ylabel="Participação (%)", title="Participação Individual e Acumulada por Grupo")
-    ax2.set_title(ax2.get_title(), fontweight="bold", fontsize=14, pad=15)
+    ax2.set(ylabel="Participação (%)")
     ax2.legend(fontsize=11)
     ax2.grid(axis="y", alpha=0.3)
     for i, (v, _) in enumerate(zip(participacao.values, participacao_acum.values)):
