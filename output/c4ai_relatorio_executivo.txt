@@ -1,7 +1,7 @@
 ================================================================================
 RELATÓRIO EXECUTIVO — ANÁLISE DE PUBLICAÇÕES DO C4AI
 ================================================================================
-Data da análise : 08/06/2026 20:31
+Data da análise : 19/06/2026 21:23
 Total de publicações : 413
 Período : 2020–2024
 Grupos de pesquisa : 8
