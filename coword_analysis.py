@@ -258,10 +258,11 @@ def draw_png(G, node2comm, path, title, top_labels=40):
     comps = [c for c in nx.connected_components(G) if len(c) >= 3]
     if comps:
         G = G.subgraph(set().union(*comps)).copy()
-    # k controla o espaçamento entre nós; mais iterações => layout mais estável
-    pos = nx.spring_layout(G, k=0.6, seed=42, weight="weight", iterations=300)
+    # k alto => mais repulsão => nós mais afastados (menos amontoados no centro)
+    pos = nx.spring_layout(G, k=1.6, seed=42, weight="weight", iterations=400)
     freqs = nx.get_node_attributes(G, "freq")
-    sizes = [80 + 55 * freqs.get(n, 1) for n in G.nodes()]
+    # escala por raiz quadrada: termos muito frequentes não viram bolas enormes
+    sizes = [40 + 55 * (freqs.get(n, 1) ** 0.5) for n in G.nodes()]
     colors = [PALETTE[node2comm.get(n, 0) % len(PALETTE)] for n in G.nodes()]
     weights = [G[u][v]["weight"] for u, v in G.edges()]
     maxw = max(weights) if weights else 1
@@ -325,9 +326,9 @@ def draw_temporal_png(period_graphs, path):
         comps = [c for c in nx.connected_components(G) if len(c) >= 3]
         if comps:
             G = G.subgraph(set().union(*comps)).copy()
-        pos = nx.spring_layout(G, k=0.7, seed=42, weight="weight", iterations=250)
+        pos = nx.spring_layout(G, k=1.5, seed=42, weight="weight", iterations=300)
         freqs = nx.get_node_attributes(G, "freq")
-        sizes = [60 + 50 * freqs.get(nd, 1) for nd in G.nodes()]
+        sizes = [40 + 45 * (freqs.get(nd, 1) ** 0.5) for nd in G.nodes()]
         colors = [PALETTE[node2comm.get(nd, 0) % len(PALETTE)] for nd in G.nodes()]
         nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.13, edge_color="#999")
         nx.draw_networkx_nodes(G, pos, ax=ax, node_size=sizes,
