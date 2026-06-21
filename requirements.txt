@@ -7,3 +7,4 @@ requests>=2.31       # raspagem (scrape_c4ai.py) + enriquecimento (enrich_metada
 beautifulsoup4>=4.12 # parsing HTML (scrape_c4ai.py)
 networkx>=3.1        # rede de co-ocorrência + comunidades (coword_analysis.py)
 pyvis>=0.3           # rede interativa em HTML (coword_analysis.py)
+adjustText>=1.0      # afasta rótulos sobrepostos na rede (coword_analysis.py)

@@ -7,9 +7,9 @@ Período analisado: **2020–2024**
 
 ## Resumo
 
-Análise bibliométrica exploratória da produção acadêmica dos oito grupos de pesquisa que compõem o **C4AI**: AGRIBIO, AI HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES. Os dados provêm de uma **curadoria manual** da produção do centro, revisada e desduplicada pela pesquisadora, totalizando **407 publicações** no período de **2020 a 2024** (das quais 406 têm ano identificado).
+Análise bibliométrica exploratória da produção acadêmica dos oito grupos de pesquisa que compõem o **C4AI**: AGRIBIO, AI HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES. Os dados provêm de uma **curadoria manual** da produção do centro, revisada e desduplicada pela pesquisadora, totalizando **407 publicações** no período de **2020 a 2024**.
 
-As análises abrangem o *ranking* e a distribuição proporcional por grupo, a evolução temporal agregada e por grupo, a taxa de produtividade (publicações por ano), indicadores de concentração da produção (índice Herfindahl–Hirschman, HHI) e uma **análise de co-ocorrência de termos** (*co-word analysis*). Os resultados indicam uma produção **moderadamente concentrada** — os três maiores grupos respondem por **62,6%** de todas as publicações — com pico de produção em **2023** (189 publicações) e liderança consolidada do grupo **NLP2**.
+As análises abrangem o *ranking* e a distribuição proporcional por grupo, a evolução temporal agregada e por grupo, a taxa de produtividade (publicações por ano), indicadores de concentração da produção (índice Herfindahl–Hirschman, HHI) e uma **análise de co-ocorrência de termos** (*co-word analysis*). Os resultados indicam uma produção **moderadamente concentrada** — os três maiores grupos respondem por **62,7%** de todas as publicações — com pico de produção em **2023** (189 publicações) e liderança consolidada do grupo **NLP2**.
 
 ---
 
@@ -22,35 +22,35 @@ A análise consolida as publicações dos grupos de pesquisa do C4AI em um únic
 1. O grupo de saúde, registrado sob as grafias `AI HEALTH`, `AL HEALTH` e `HEALTH`, foi consolidado sob o rótulo único **AI HEALTH**.
 2. Dois registros cujo rótulo de grupo havia ficado deslocado (recebendo o valor da coluna *tipo*) foram corrigidos para **AGRIBIO**, conforme seus autores e temas.
 
-Restaram **407 publicações** distribuídas entre **8 grupos**. Um único registro (AGRIBIO) não possui ano informado; por isso, as análises temporais (Figuras 1–9) consideram os **406 registros com ano identificado**, enquanto a rede de co-ocorrência global (Figura 10) usa os 407. As métricas e visualizações foram geradas com `pandas`, `matplotlib`, `seaborn` e `networkx`.
+Restaram **407 publicações** distribuídas entre **8 grupos**, todas com ano de publicação identificado (2020–2024). As métricas e visualizações foram geradas com `pandas`, `matplotlib`, `seaborn` e `networkx`.
 
 ### Tabela 1 — Indicadores gerais
 
 | Indicador | Valor |
 |---|---|
-| Total de publicações | 407 (406 com ano) |
+| Total de publicações | 407 |
 | Período analisado | 2020–2024 |
 | Número de grupos de pesquisa | 8 |
-| Média geral de publicações por ano | 81,2 |
+| Média geral de publicações por ano | 81,4 |
 | Ano mais produtivo | 2023 (189 pubs) |
 | Grupo mais produtivo (total) | NLP2 (144 pubs) |
 | Grupo mais eficiente (pubs/ano) | NLP2 (28,80) |
-| Concentração nos 3 maiores grupos | 62,6% |
-| Índice de concentração HHI | 1998 (moderado) |
+| Concentração nos 3 maiores grupos | 62,7% |
+| Índice de concentração HHI | 1995 (moderado) |
 
 ### Tabela 2 — Ranking dos grupos
 
 | # | Grupo | Total | Part. (%) | Pubs/ano |
 |---|---|---|---|---|
-| 1 | NLP2 | 144 | 35,5 | 28,80 |
+| 1 | NLP2 | 144 | 35,4 | 28,80 |
 | 2 | KEML | 56 | 13,8 | 14,00 |
-| 3 | AGRIBIO | 54 | 13,3 | 10,80 |
-| 4 | AI HEALTH | 53 | 13,1 | 13,25 |
+| 3 | AGRIBIO | 55 | 13,5 | 11,00 |
+| 4 | AI HEALTH | 53 | 13,0 | 13,25 |
 | 5 | HUMANITIES | 50 | 12,3 | 12,50 |
 | 6 | PROINDL | 21 | 5,2 | 10,50 |
 | 7 | MClimate | 15 | 3,7 | 7,50 |
 | 8 | OceanML | 13 | 3,2 | 6,50 |
-| | **Total** | **406** | **100,0** | — |
+| | **Total** | **407** | **100,0** | — |
 
 ---
 
@@ -80,13 +80,13 @@ As figuras a seguir foram geradas automaticamente e estão disponíveis em alta 
 
 ![Ranking de publicações por grupo de pesquisa do C4AI](figuras/1_ranking_grupos.png)
 
-**Ranking de publicações por grupo de pesquisa do C4AI.** Gráfico de barras horizontais ordenado de forma decrescente pelo número absoluto de publicações. O grupo **NLP2** lidera com 144 publicações (35,5% do total), seguido por **KEML** com 56 (13,8%) e **AGRIBIO** com 54 (13,3%). Na sequência aparecem AI HEALTH com 53 (13,1%) e HUMANITIES com 50 (12,3%), e os grupos de menor volume — PROINDL (21; 5,2%), MClimate (15; 3,7%) e OceanML (13; 3,2%). A liderança isolada de NLP2 evidencia a assimetria da produção entre os grupos.
+**Ranking de publicações por grupo de pesquisa do C4AI.** Gráfico de barras horizontais ordenado de forma decrescente pelo número absoluto de publicações. O grupo **NLP2** lidera com 144 publicações (35,4% do total), seguido por **KEML** com 56 (13,8%) e **AGRIBIO** com 55 (13,5%). Na sequência aparecem AI HEALTH com 53 (13,0%) e HUMANITIES com 50 (12,3%), e os grupos de menor volume — PROINDL (21; 5,2%), MClimate (15; 3,7%) e OceanML (13; 3,2%). A liderança isolada de NLP2 evidencia a assimetria da produção entre os grupos.
 
 ### Figura 2 — Distribuição proporcional por grupo
 
 ![Distribuição proporcional de publicações por grupo](figuras/2_pizza_grupos.png)
 
-**Distribuição proporcional de publicações por grupo.** O gráfico de setores reforça a leitura do ranking (Figura 1), destacando que **NLP2**, sozinho, responde por cerca de um terço da produção (35,5%) e que os dois maiores grupos (NLP2 e KEML) somam 49,3%. As fatias dos grupos intermediários (AGRIBIO, AI HEALTH, HUMANITIES) e dos três menores (PROINDL, MClimate, OceanML) revelam uma distribuição desigual, porém não monopolizada por um único grupo.
+**Distribuição proporcional de publicações por grupo.** O gráfico de setores reforça a leitura do ranking (Figura 1), destacando que **NLP2**, sozinho, responde por cerca de um terço da produção (35,4%) e que os dois maiores grupos (NLP2 e KEML) somam 49,1%. As fatias dos grupos intermediários (AGRIBIO, AI HEALTH, HUMANITIES) e dos três menores (PROINDL, MClimate, OceanML) revelam uma distribuição desigual, porém não monopolizada por um único grupo.
 
 ---
 
@@ -96,7 +96,7 @@ As figuras a seguir foram geradas automaticamente e estão disponíveis em alta 
 
 ![Evolução anual de publicações e tendência de crescimento do C4AI](figuras/3_evolucao_temporal_geral.png)
 
-**Evolução anual de publicações e tendência de crescimento do C4AI.** *Painel superior:* número absoluto de publicações por ano, com o ano de pico (**2023**, 189 publicações) destacado em vermelho. Observa-se o crescimento acelerado de 2020 (5) a 2023, passando por 50 em 2021 e 103 em 2022, seguido de queda acentuada em 2024 (59). *Painel inferior:* a mesma série com a curva de *tendência linear* (linha tracejada vermelha) sobreposta; a tendência permanece positiva, mas a queda de 2024 sugere um possível artefato de coleta incompleta dos dados desse ano, e não necessariamente uma redução real da produção.
+**Evolução anual de publicações e tendência de crescimento do C4AI.** *Painel superior:* número absoluto de publicações por ano, com o ano de pico (**2023**, 189 publicações) destacado em vermelho. Observa-se o crescimento acelerado de 2020 (5) a 2023, passando por 51 em 2021 e 103 em 2022, seguido de queda acentuada em 2024 (59). *Painel inferior:* a mesma série com a curva de *tendência linear* (linha tracejada vermelha) sobreposta; a tendência permanece positiva, mas a queda de 2024 sugere um possível artefato de coleta incompleta dos dados desse ano, e não necessariamente uma redução real da produção.
 
 ### Figura 4 — Mapa de calor grupo × ano
 
@@ -114,7 +114,7 @@ As figuras a seguir foram geradas automaticamente e estão disponíveis em alta 
 
 ![Evolução temporal dos cinco principais grupos](figuras/7_comparacao_top_grupos.png)
 
-**Evolução temporal dos cinco principais grupos.** Painéis individuais (*small multiples*) com a série anual de cada um dos cinco grupos mais produtivos, permitindo comparar perfis de crescimento sem a sobreposição da Figura 5. NLP2 (144 pubs) apresenta crescimento sustentado e o maior volume em todos os anos; KEML (56) e AGRIBIO (54) crescem de forma gradual até 2023; AI HEALTH (53) exibe perfil em forma de pico, com máximo em 2023; e HUMANITIES (50) concentra sua produção em 2022–2023.
+**Evolução temporal dos cinco principais grupos.** Painéis individuais (*small multiples*) com a série anual de cada um dos cinco grupos mais produtivos, permitindo comparar perfis de crescimento sem a sobreposição da Figura 5. NLP2 (144 pubs) apresenta crescimento sustentado e o maior volume em todos os anos; KEML (56) e AGRIBIO (55) crescem de forma gradual até 2023; AI HEALTH (53) exibe perfil em forma de pico, com máximo em 2023; e HUMANITIES (50) concentra sua produção em 2022–2023.
 
 ### Figura 8 — Composição temporal empilhada
 
@@ -138,7 +138,7 @@ O grau de concentração da produção foi quantificado pelo índice Herfindahl�
 
 $$\mathrm{HHI} = \sum_{i=1}^{n} s_i^{2} \times 10\,000, \qquad s_i = \frac{\text{publicações do grupo } i}{\text{total de publicações}}.$$
 
-O valor obtido foi de **HHI ≈ 1998**, situado na faixa *moderada* (1500 a 2500). Esse resultado é coerente com a observação de que os três maiores grupos concentram 62,6% da produção total, configurando um cenário de produção desigual, porém ainda não plenamente monopolizado por um único grupo.
+O valor obtido foi de **HHI ≈ 1995**, situado na faixa *moderada* (1500 a 2500). Esse resultado é coerente com a observação de que os três maiores grupos concentram 62,7% da produção total, configurando um cenário de produção desigual, porém ainda não plenamente monopolizado por um único grupo.
 
 ### Figura 9 — Análise de concentração da produção
 
@@ -176,7 +176,7 @@ Esta seção pratica a *co-word analysis* no espírito do método clássico de C
 
 A produção acadêmica do C4AI no período 2020–2024 caracteriza-se por:
 
-- **Concentração moderada:** NLP2 e KEML respondem por 49,3% das publicações; os três maiores grupos (NLP2, KEML e AGRIBIO), por 62,6% (HHI moderado ≈ 1998).
+- **Concentração moderada:** NLP2 e KEML respondem por 49,1% das publicações; os três maiores grupos (NLP2, KEML e AGRIBIO), por 62,7% (HHI moderado ≈ 1995).
 - **Liderança de NLP2:** o grupo é o mais produtivo tanto em volume total (144 publicações) quanto em taxa anual (28,80 pubs/ano), mantendo produção em todos os anos do período.
 - **Crescimento acelerado até 2023:** o volume anual saltou de 5 publicações em 2020 para 189 em 2023, com participação crescente dos grupos de saúde, conhecimento e humanidades.
 - **Queda aparente em 2024:** provavelmente associada à coleta incompleta dos dados do último ano, o que recomenda cautela na interpretação dessa redução.

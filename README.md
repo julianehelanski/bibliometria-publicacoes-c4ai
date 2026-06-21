@@ -8,12 +8,12 @@ Análise exploratória da produção acadêmica dos grupos de pesquisa do **Cent
 
 ## 📊 Relatório
 
-A análise completa, com as nove figuras, legendas e o inventário de visualizações, está disponível em:
+A análise completa, com as onze figuras, legendas e o inventário de visualizações, está disponível em:
 
 - **[`RELATORIO.md`](RELATORIO.md)** — relatório bibliométrico em Markdown (renderiza direto no GitHub), com inventário de figuras.
 - **[`documento_analise.tex`](documento_analise.tex)** — versão tipografada em LaTeX (compilar com `pdflatex documento_analise.tex`).
 
-**Resumo:** 407 publicações (curadoria manual) · 8 grupos · 2020–2024 · líder NLP2 (144 pubs) · pico em 2023 (189) · HHI 1998 (moderado).
+**Resumo:** 407 publicações (curadoria manual) · 8 grupos · 2020–2024 · líder NLP2 (144 pubs) · pico em 2023 (189) · HHI 1995 (moderado).
 
 ---
 
