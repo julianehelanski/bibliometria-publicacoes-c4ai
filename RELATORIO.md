@@ -56,7 +56,7 @@ Esse tratamento explica por que o total aqui reportado (413) é inferior a conta
 
 ## 2. Inventário de figuras
 
-As nove figuras a seguir foram geradas automaticamente pelo *script* `analise_publicacoes` e estão disponíveis em alta resolução nas pastas [`figuras/`](figuras/) e [`output/`](output/).
+As figuras a seguir foram geradas automaticamente e estão disponíveis em alta resolução nas pastas [`figuras/`](figuras/) e [`output/`](output/). As figuras 1–9 vêm do *script* `analise_publicacoes`; as figuras 10–11 (co-word analysis) vêm de `coword_analysis.py`.
 
 | # | Arquivo | Tipo de visualização | Seção |
 |---|---|---|---|
@@ -69,6 +69,8 @@ As nove figuras a seguir foram geradas automaticamente pelo *script* `analise_pu
 | 7 | `7_comparacao_top_grupos.png` | *Small multiples* (linhas) | Evolução temporal |
 | 8 | `8_composicao_temporal.png` | Barras empilhadas | Evolução temporal |
 | 9 | `9_analise_concentracao.png` | Curva de Lorenz + participação | Concentração |
+| 10 | `10_rede_coword.png` | Rede de co-ocorrência (comunidades) | Co-word analysis |
+| 11 | `11_rede_coword_temporal.png` | *Small multiples* de redes por período | Co-word analysis |
 
 ---
 
@@ -146,7 +148,31 @@ O valor obtido foi de **HHI ≈ 1975**, situado na faixa *moderada* (1500 a 2500
 
 ---
 
-## 6. Considerações finais
+## 6. Análise de co-ocorrência de termos (co-word analysis)
+
+Esta seção pratica a *co-word analysis* no espírito do método clássico de Callon, Law & Rip (rede de palavras / rede de problematizações): extraem-se os termos das publicações, calcula-se a co-ocorrência entre eles e mapeia-se como os temas se **agrupam** (comunidades) e se **deslocam no tempo**. A rede é gerada pelo script [`coword_analysis.py`](coword_analysis.py).
+
+**Fonte dos termos.** A base oficial desduplicada traz apenas o `Título` — não há *abstracts* nem palavras-chave. Portanto, os termos desta análise são extraídos dos **títulos** das 413 publicações, após limpeza do "rabo" bibliográfico (venue, periódico, volume, páginas) e remoção de *stopwords* bilíngues (PT/EN) e de ruído editorial. É uma aproximação honesta: o sinal é mais esparso que o de uma co-word baseada em *keywords*. Para uma versão mais fiel, o script [`enrich_metadata.py`](enrich_metadata.py) busca *abstracts* e *keywords* no OpenAlex; basta apontar `coword_analysis.py --input` para o arquivo enriquecido.
+
+### Figura 10 — Rede global de co-ocorrência de termos
+
+![Rede de co-ocorrência de termos do C4AI, com comunidades temáticas detectadas por modularidade (Louvain)](figuras/10_rede_coword.png)
+
+**Rede de co-ocorrência de termos — C4AI (2020–2024).** Cada nó é um termo (uni ou bigrama) presente nos títulos; o tamanho é proporcional à frequência e a cor indica a comunidade temática detectada pelo algoritmo de Louvain. Duas palavras se ligam quando co-ocorrem no mesmo título. Emergem agrupamentos coerentes que espelham os grupos de pesquisa: **PLN do português brasileiro** (*brazilian portuguese, speech, corpus, recognition*), **dependências universais** (*universal dependencies, brasileiro*), **aprendizado profundo** (*machine/deep learning, mining*), **redes neurais e classificação** (*neural networks, classification, graph*), **oceano e clima** (*ocean, arctic, physics-informed neural operator*), **línguas indígenas e dados FAIR**, e um núcleo de **linguagem natural, lógica e filosofia da IA**.
+
+### Figura 11 — Deslocamento temático no tempo
+
+![Pequenas-múltiplas com a rede de co-ocorrência em três recortes temporais, evidenciando o deslocamento dos temas](figuras/11_rede_coword_temporal.png)
+
+**Deslocamento temático no tempo — co-ocorrência por período.** A mesma rede, recortada em três janelas (2020–2021, 2022–2023 e 2024), evidencia o movimento dos problemas: em **2020–2021** o mapa é esparso e ancorado em PLN do português e dependências universais; em **2022–2023** — o pico de produção — a rede se adensa e se diversifica, incorporando aprendizado profundo, oceano/clima e saúde; em **2024** a rede se contrai (coleta provavelmente incompleta do último ano). Esse movimento ilustra graficamente como as problematizações do centro se agrupam e migram ao longo do período.
+
+**Saídas geradas** (em `output/coword/`): além das duas figuras, o script produz uma **rede interativa navegável** (`rede_coword_interativa.html`) e três tabelas — lista de arestas (`coword_arestas.xlsx`), termos por comunidade (`coword_nos_comunidades.xlsx`) e termos por período (`coword_termos_por_periodo.xlsx`).
+
+> **Nota metodológica.** Por se basear em títulos, esta rede capta a co-ocorrência lexical da produção, não o conteúdo integral dos trabalhos; termos genéricos de *venue* e método foram filtrados, mas alguma esparsidade é inerente. A leitura interpretativa das "problematizações" (no sentido do livro) permanece a cargo do/a pesquisador/a — a rede é um instrumento exploratório, não um substituto da análise qualitativa.
+
+---
+
+## 7. Considerações finais
 
 A produção acadêmica do C4AI no período 2020–2024 caracteriza-se por:
 
