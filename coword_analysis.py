@@ -11,7 +11,7 @@ temas se agrupam (comunidades) e se deslocam no tempo.
 
 IMPORTANTE — sobre a fonte dos termos
 -------------------------------------
-A base oficial desduplicada (`c4ai_publicacoes_py.xlsx`) contém **413
+A base oficial (`c4ai_publicacoes.xlsx`, curadoria manual) contém **407
 publicações** e **não traz abstracts nem palavras-chave** — apenas o `Título`.
 Portanto, esta análise extrai os termos dos TÍTULOS. É uma aproximação honesta:
 o sinal é mais esparso do que o de uma co-word baseada em keywords/abstracts.
@@ -53,7 +53,7 @@ from networkx.algorithms.community import louvain_communities
 # CONFIGURAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
 
-DEFAULT_INPUT = "c4ai_publicacoes_py.xlsx"
+DEFAULT_INPUT = "c4ai_publicacoes.xlsx"
 DEFAULT_OUTPUT = "output/coword/"
 
 # Recortes temporais (espelham os períodos usados em analise_publicacoes)
@@ -152,6 +152,11 @@ def load_data(path: str) -> pd.DataFrame:
         "Grupo de Pesquisa": "Grupo",
         "Data de publicação": "Ano",
         "Título": "Titulo",
+        # layout da planilha de curadoria manual (Drive / Power BI)
+        "Tìtulo do trabalho": "Titulo",
+        "Título do trabalho": "Titulo",
+        "Ano de Publicação": "Ano",
+        "Tipo de Publicação": "Tipo_Publicacao",
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
 
@@ -329,8 +334,14 @@ def draw_html(G, node2comm, path):
     for u, v in G.edges():
         net.add_edge(u, v, value=G[u][v]["weight"])
     net.set_options('{"physics": {"stabilization": {"iterations": 200}}}')
-    # write_html evita a dependência de notebook/template
-    net.write_html(str(path), notebook=False)
+    # Gera o HTML e grava em UTF-8 explicitamente. Em Windows, o write_html do
+    # pyvis usa o codec padrão (cp1252) e quebra com caracteres acentuados
+    # (UnicodeEncodeError). Gerar a string e escrever com encoding="utf-8" evita.
+    try:
+        html = net.generate_html(notebook=False)
+    except TypeError:
+        html = net.generate_html()
+    Path(path).write_text(html, encoding="utf-8")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

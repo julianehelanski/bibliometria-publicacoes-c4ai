@@ -1,28 +1,28 @@
 ================================================================================
 RELATÓRIO EXECUTIVO — ANÁLISE DE PUBLICAÇÕES DO C4AI
 ================================================================================
-Data da análise : 19/06/2026 21:23
-Total de publicações : 413
+Data da análise : 21/06/2026 03:28
+Total de publicações : 406
 Período : 2020–2024
 Grupos de pesquisa : 8
 
 RANKING DE GRUPOS
 --------------------------------------------------------------------------------
- 1. NLP2                     : 144 publicações ( 34.9%)
- 2. AGRIBIO                  :  58 publicações ( 14.0%)
- 3. KEML                     :  56 publicações ( 13.6%)
- 4. AI HEALTH                :  53 publicações ( 12.8%)
- 5. HUMANITIES               :  53 publicações ( 12.8%)
- 6. PROINDL                  :  21 publicações (  5.1%)
- 7. MClimate                 :  15 publicações (  3.6%)
- 8. OceanML                  :  13 publicações (  3.1%)
+ 1. NLP2                     : 144 publicações ( 35.5%)
+ 2. KEML                     :  56 publicações ( 13.8%)
+ 3. AGRIBIO                  :  54 publicações ( 13.3%)
+ 4. AI HEALTH                :  53 publicações ( 13.1%)
+ 5. HUMANITIES               :  50 publicações ( 12.3%)
+ 6. PROINDL                  :  21 publicações (  5.2%)
+ 7. MClimate                 :  15 publicações (  3.7%)
+ 8. OceanML                  :  13 publicações (  3.2%)
 
 INDICADORES GERAIS
 --------------------------------------------------------------------------------
-Média geral : 82.6 publicações/ano
+Média geral : 81.2 publicações/ano
 Grupo mais produtivo (total) : NLP2 (144 pubs)
 Grupo mais eficiente (pubs/ano) : NLP2 (28.80 pubs/ano)
-Ano mais produtivo : 2023 (199 publicações)
-Top 3 concentram : 62.5% das publicações
-Índice HHI : 1975 (Moderado)
+Ano mais produtivo : 2023 (189 publicações)
+Top 3 concentram : 62.6% das publicações
+Índice HHI : 1998 (Moderado)
 ================================================================================

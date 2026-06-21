@@ -59,12 +59,24 @@ def normalize(s: str) -> str:
 def clean_query_title(title: str) -> str:
     """Recorta o rabo bibliográfico para melhorar o casamento por título."""
     t = str(title)
-    for marker in [". In ", " In: ", ".\" ", "\" ", " In The Proceedings"]:
+    # corta no 1º marcador de venue/periódico
+    for marker in [". In ", " In: ", ".\" ", "\" ", " In The Proceedings",
+                   " In Proceedings", ". Revista", ". Journal", ". IEEE",
+                   ", V. ", ", v. ", ", Vol", ". Anais", ". Estudos"]:
         idx = t.find(marker)
-        if idx > 25:  # só corta se já houver um título razoável antes
+        if idx > 20:  # só corta se já houver um título razoável antes
             t = t[:idx]
             break
+    # remove eventual lista de autores no início ("Sobrenome, Nome, ... .")
     return t.strip().strip('"').strip()
+
+
+def similarity(a: str, b: str) -> float:
+    """Sobreposição de tokens em relação à consulta (Jaccard assimétrico)."""
+    sa, sb = set(normalize(a).split()), set(normalize(b).split())
+    if not sa:
+        return 0.0
+    return len(sa & sb) / len(sa)
 
 
 def fetch_openalex(title: str, email: str, session: requests.Session) -> dict | None:
@@ -74,7 +86,7 @@ def fetch_openalex(title: str, email: str, session: requests.Session) -> dict | 
         return None
     params = {
         "search": query,
-        "per-page": 1,
+        "per-page": 5,  # avalia vários candidatos e escolhe o mais similar
         "mailto": email,
         "select": "title,abstract_inverted_index,keywords,concepts",
     }
@@ -85,12 +97,15 @@ def fetch_openalex(title: str, email: str, session: requests.Session) -> dict | 
         results = r.json().get("results", [])
         if not results:
             return None
-        cand = results[0]
-        # checagem leve de similaridade para evitar falso-positivo grosseiro
-        a, b = set(normalize(query).split()), set(normalize(cand.get("title", "")).split())
-        if not a or len(a & b) / len(a) < 0.4:
+        best, best_sim = None, 0.0
+        for cand in results:
+            sim = similarity(query, cand.get("title", "") or "")
+            if sim > best_sim:
+                best, best_sim = cand, sim
+        # limiar moderado: aceita casamentos parciais, rejeita ruído grosseiro
+        if best is None or best_sim < 0.45:
             return None
-        return cand
+        return best
     except requests.RequestException:
         return None
 
@@ -106,8 +121,13 @@ def main():
     args = ap.parse_args()
 
     df = pd.read_excel(args.input)
-    title_col = "Título" if "Título" in df.columns else "Titulo"
-    if title_col not in df.columns:
+    # detecta a coluna de título nos layouts conhecidos (raspado e manual)
+    title_col = next(
+        (c for c in ("Título", "Titulo", "Tìtulo do trabalho",
+                     "Título do trabalho") if c in df.columns),
+        None,
+    )
+    if title_col is None:
         raise SystemExit("ERRO: coluna de título não encontrada.")
 
     session = requests.Session()
