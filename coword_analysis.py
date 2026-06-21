@@ -245,22 +245,31 @@ def detect_communities(G):
 # VISUALIZAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
 
-def draw_png(G, node2comm, path, title, top_labels=45):
-    """Desenha a rede em PNG (matplotlib), rotulando os termos mais centrais."""
+def draw_png(G, node2comm, path, title, top_labels=40):
+    """Desenha a rede em PNG (matplotlib), rotulando os termos mais centrais.
+
+    Usa um layout mais espalhado e a biblioteca adjustText (quando disponível)
+    para afastar os rótulos, evitando sobreposição de nomes dos nós.
+    """
     if G.number_of_nodes() == 0:
         return
-    pos = nx.spring_layout(G, k=0.45, seed=42, weight="weight",
-                           iterations=120)
+    # Remove componentes minúsculos (díades soltas) que, desconexos, esticam o
+    # layout e comprimem a rede principal num canto. Eles seguem nas tabelas/HTML.
+    comps = [c for c in nx.connected_components(G) if len(c) >= 3]
+    if comps:
+        G = G.subgraph(set().union(*comps)).copy()
+    # k controla o espaçamento entre nós; mais iterações => layout mais estável
+    pos = nx.spring_layout(G, k=0.6, seed=42, weight="weight", iterations=300)
     freqs = nx.get_node_attributes(G, "freq")
     sizes = [80 + 55 * freqs.get(n, 1) for n in G.nodes()]
     colors = [PALETTE[node2comm.get(n, 0) % len(PALETTE)] for n in G.nodes()]
     weights = [G[u][v]["weight"] for u, v in G.edges()]
     maxw = max(weights) if weights else 1
 
-    fig, ax = plt.subplots(figsize=(18, 13))
+    fig, ax = plt.subplots(figsize=(22, 16))
     nx.draw_networkx_edges(
-        G, pos, ax=ax, alpha=0.18,
-        width=[0.4 + 2.4 * (w / maxw) for w in weights], edge_color="#888888",
+        G, pos, ax=ax, alpha=0.15,
+        width=[0.3 + 2.2 * (w / maxw) for w in weights], edge_color="#999999",
     )
     nx.draw_networkx_nodes(
         G, pos, ax=ax, node_size=sizes, node_color=colors,
@@ -268,12 +277,28 @@ def draw_png(G, node2comm, path, title, top_labels=45):
     )
     # rotula apenas os top-N termos por frequência (legibilidade)
     top = sorted(G.nodes(), key=lambda n: freqs.get(n, 0), reverse=True)[:top_labels]
-    nx.draw_networkx_labels(
-        G, pos, labels={n: n for n in top}, ax=ax, font_size=9,
-        font_color="#111111",
-    )
-    ax.set_title(title, fontsize=17, fontweight="bold")
+    texts = [
+        ax.text(pos[n][0], pos[n][1], n, fontsize=9, fontweight="bold",
+                color="#111111", ha="center", va="center",
+                bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
+                          alpha=0.7))
+        for n in top
+    ]
+    # afasta os rótulos uns dos outros (e dos nós) para não sobreporem
+    try:
+        from adjustText import adjust_text
+        adjust_text(
+            texts, ax=ax,
+            expand=(1.3, 1.6), force_text=(0.4, 0.6),
+            arrowprops=dict(arrowstyle="-", color="#bbbbbb", lw=0.5),
+        )
+    except ImportError:
+        print("  ⚠ adjustText não instalado — rótulos podem se sobrepor "
+              "(pip install adjustText).")
+
+    ax.set_title(title, fontsize=18, fontweight="bold")
     ax.axis("off")
+    ax.margins(0.08)
     fig.tight_layout()
     fig.savefig(path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -283,28 +308,47 @@ def draw_temporal_png(period_graphs, path):
     """Pequenas-múltiplas: uma rede por período, mostrando o deslocamento."""
     periods = [p for p, _ in period_graphs]
     n = len(period_graphs)
-    fig, axes = plt.subplots(1, n, figsize=(8 * n, 8))
+    fig, axes = plt.subplots(1, n, figsize=(9 * n, 9))
     if n == 1:
         axes = [axes]
+    try:
+        from adjustText import adjust_text
+    except ImportError:
+        adjust_text = None
     for ax, (label, (G, node2comm)) in zip(axes, period_graphs):
         if G.number_of_nodes() == 0:
             ax.set_title(f"{label}\n(sem termos acima do limiar)", fontsize=13)
             ax.axis("off")
             continue
-        pos = nx.spring_layout(G, k=0.5, seed=42, weight="weight", iterations=90)
+        # mantém só componentes com >= 3 termos (evita que díades soltas
+        # estiquem o layout e comprimam o núcleo principal do painel)
+        comps = [c for c in nx.connected_components(G) if len(c) >= 3]
+        if comps:
+            G = G.subgraph(set().union(*comps)).copy()
+        pos = nx.spring_layout(G, k=0.7, seed=42, weight="weight", iterations=250)
         freqs = nx.get_node_attributes(G, "freq")
         sizes = [60 + 50 * freqs.get(nd, 1) for nd in G.nodes()]
         colors = [PALETTE[node2comm.get(nd, 0) % len(PALETTE)] for nd in G.nodes()]
-        nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.15, edge_color="#888")
+        nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.13, edge_color="#999")
         nx.draw_networkx_nodes(G, pos, ax=ax, node_size=sizes,
                                node_color=colors, alpha=0.9,
                                linewidths=0.4, edgecolors="white")
         top = sorted(G.nodes(), key=lambda nd: freqs.get(nd, 0),
-                     reverse=True)[:18]
-        nx.draw_networkx_labels(G, pos, labels={nd: nd for nd in top}, ax=ax,
-                                font_size=8)
+                     reverse=True)[:12]
+        texts = [
+            ax.text(pos[nd][0], pos[nd][1], nd, fontsize=8, fontweight="bold",
+                    ha="center", va="center",
+                    bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none",
+                              alpha=0.7))
+            for nd in top
+        ]
+        if adjust_text is not None:
+            adjust_text(texts, ax=ax, expand=(1.3, 1.5),
+                        force_text=(0.3, 0.5),
+                        arrowprops=dict(arrowstyle="-", color="#cccccc", lw=0.4))
         ax.set_title(label, fontsize=15, fontweight="bold")
         ax.axis("off")
+        ax.margins(0.1)
     fig.suptitle("Deslocamento temático no tempo — co-ocorrência de termos por período",
                  fontsize=16, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.96])
