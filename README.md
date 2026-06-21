@@ -59,6 +59,20 @@ python analyze.py --input dados/publicacoes.xlsx --output resultados/
 python analyze.py --no-plots
 ```
 
+### 3. Co-word analysis (rede de co-ocorrência)
+
+Extrai os termos das publicações, calcula a co-ocorrência e mapeia os temas (comunidades) e seu deslocamento no tempo:
+
+```bash
+python coword_analysis.py                         # rede + figuras + HTML interativo
+python coword_analysis.py --min-term-freq 5       # ajusta os limiares
+python coword_analysis.py --no-html               # só PNG
+```
+
+> Os termos são extraídos dos **títulos** (a base oficial não traz abstracts/keywords). Para uma co-word mais fiel ao método, enriqueça antes a base com `enrich_metadata.py` (busca abstracts/keywords no OpenAlex — requer internet) e rode `coword_analysis.py --input c4ai_publicacoes_enriquecido.xlsx`.
+
+Saídas em `output/coword/`: `10_rede_coword.png`, `11_rede_coword_temporal.png`, `rede_coword_interativa.html` e tabelas (`coword_arestas.xlsx`, `coword_nos_comunidades.xlsx`, `coword_termos_por_periodo.xlsx`).
+
 ### Argumentos
 
 | Argumento     | Padrão                       | Descrição                        |
