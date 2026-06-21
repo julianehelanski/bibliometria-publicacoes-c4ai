@@ -25,7 +25,7 @@ import seaborn as sns
 # CONFIGURAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
 
-DEFAULT_INPUT  = "c4ai_publicacoes_py.xlsx"
+DEFAULT_INPUT  = "c4ai_publicacoes.xlsx"
 DEFAULT_OUTPUT = "output/"
 
 SHEET_MAP = {

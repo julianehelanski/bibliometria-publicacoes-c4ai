@@ -57,19 +57,19 @@
 \noindent
 Este documento apresenta uma análise bibliométrica exploratória da produção
 acadêmica dos oito grupos de pesquisa que compõem o \textbf{Centro de
-Inteligência Artificial da Universidade de São Paulo (C4AI)}: Agribio, AI
-HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES. Os dados foram
-coletados automaticamente da base de publicações oficial do centro
-(\url{https://c4ai.inova.usp.br/resources.html}) e, após limpeza e
-desduplicação, contabilizaram \textbf{413 publicações} no período de
-\textbf{2020 a 2024}. As análises abrangem o \emph{ranking} e a distribuição
-proporcional por grupo, a evolução temporal agregada e por grupo, a taxa de
-produtividade (publicações por ano) e indicadores de concentração da produção
-(índice Herfindahl--Hirschman, HHI). Os resultados indicam uma produção
-moderadamente concentrada --- os três maiores grupos respondem por
-\textbf{62{,}5\%} de todas as publicações --- com pico de produção em
-\textbf{2023} (\num{199} publicações) e liderança consolidada do grupo
-\textbf{NLP2}.
+Inteligência Artificial da Universidade de São Paulo (C4AI)}: AGRIBIO, AI
+HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES. Os dados provêm de
+uma \textbf{curadoria manual} da produção do centro, revisada e desduplicada
+pela pesquisadora, totalizando \textbf{407 publicações} no período de
+\textbf{2020 a 2024} (das quais \num{406} têm ano identificado). As análises
+abrangem o \emph{ranking} e a distribuição proporcional por grupo, a evolução
+temporal agregada e por grupo, a taxa de produtividade (publicações por ano),
+indicadores de concentração da produção (índice Herfindahl--Hirschman, HHI) e
+uma \textbf{análise de co-ocorrência de termos} (\emph{co-word analysis}). Os
+resultados indicam uma produção moderadamente concentrada --- os três maiores
+grupos respondem por \textbf{62{,}6\%} de todas as publicações --- com pico de
+produção em \textbf{2023} (\num{189} publicações) e liderança consolidada do
+grupo \textbf{NLP2}.
 \end{abstract}
 
 \tableofcontents
@@ -80,28 +80,26 @@ moderadamente concentrada --- os três maiores grupos respondem por
 % ==============================================================================
 
 A análise consolida as publicações dos grupos de pesquisa do C4AI em um único
-conjunto de dados limpo. Os registros foram obtidos diretamente da fonte de
-dados que alimenta a página de recursos do centro --- um arquivo \texttt{CSV}
-carregado dinamicamente pela aplicação web ---, garantindo cobertura completa e
-reprodutível da base. Após a normalização das colunas (\texttt{Grupo},
-\texttt{Ano}, \texttt{Título}, \texttt{Autores}), a consolidação das variantes
-de rótulo de um mesmo grupo e a remoção de registros inválidos, restaram
-\num{413} publicações distribuídas entre \num{8} grupos no intervalo de
-\num{2020} a \num{2024}. As métricas e visualizações foram geradas com as
-bibliotecas \texttt{pandas}, \texttt{matplotlib} e \texttt{seaborn}.
+conjunto de dados limpo. A fonte é uma planilha de \textbf{curadoria manual}
+mantida pela pesquisadora (\texttt{c4ai\_publicacoes\_manual.xlsx}), na qual cada
+registro traz, em colunas separadas, o grupo de pesquisa, o tipo de publicação,
+os autores, o título e o ano. Diferentemente de uma coleta automatizada, essa
+curadoria mantém os \textbf{títulos limpos} (sem listas de autores ou metadados
+de \emph{venue} embutidos), o que beneficia tanto a leitura bibliométrica quanto
+a co-word analysis. As métricas e visualizações foram geradas com as bibliotecas
+\texttt{pandas}, \texttt{matplotlib}, \texttt{seaborn} e \texttt{networkx}.
 
-\paragraph{Procedência e tratamento dos dados.}
-A coleta é realizada pelo \emph{script} \texttt{scrape\_c4ai.py}, que acessa o
-arquivo \texttt{resources/publicacoes.csv} (delimitado por ponto e vírgula),
-remove a marcação \texttt{HTML} embutida nos campos textuais e exporta os dados
-no formato esperado pela rotina de análise. Dois cuidados de qualidade foram
-adotados: (i) o grupo de saúde, registrado na base sob três grafias distintas
-(\texttt{AI HEALTH}, \texttt{AL HEALTH} e \texttt{HEALTH}), foi consolidado sob
-o rótulo único \textbf{AI HEALTH}; e (ii) a exportação grava cada publicação uma
-única vez, evitando a dupla contagem. Esse tratamento explica por que o total
-aqui reportado (\num{413}) é inferior a contagens anteriores baseadas em coletas
-manuais: estas continham registros duplicados que inflavam artificialmente os
-volumes, sobretudo no grupo AI HEALTH.
+\paragraph{Preparação dos dados.}
+O \emph{script} \texttt{preparar\_base.py} normaliza a planilha de curadoria
+para o schema canônico (\texttt{c4ai\_publicacoes.xlsx}), aplicando dois cuidados
+de qualidade: (i) o grupo de saúde, registrado sob as grafias
+\texttt{AI HEALTH}, \texttt{AL HEALTH} e \texttt{HEALTH}, foi consolidado sob o
+rótulo único \textbf{AI HEALTH}; e (ii) dois registros cujo rótulo de grupo havia
+ficado deslocado foram corrigidos para \textbf{AGRIBIO}, conforme seus autores e
+temas. Restaram \num{407} publicações distribuídas entre \num{8} grupos. Um único
+registro (AGRIBIO) não possui ano informado; por isso, as análises temporais
+consideram os \num{406} registros com ano identificado, enquanto a rede de
+co-ocorrência global usa os \num{407}.
 
 \begin{table}[H]
 \centering
@@ -111,15 +109,15 @@ volumes, sobretudo no grupo AI HEALTH.
 \toprule
 \textbf{Indicador} & \textbf{Valor} \\
 \midrule
-Total de publicações                     & \num{413} \\
+Total de publicações                     & \num{407} (\num{406} com ano) \\
 Período analisado                        & 2020--2024 \\
 Número de grupos de pesquisa             & \num{8} \\
-Média geral de publicações por ano       & \num{82.6} \\
-Ano mais produtivo                       & 2023 (\num{199} pubs) \\
+Média geral de publicações por ano       & \num{81.2} \\
+Ano mais produtivo                       & 2023 (\num{189} pubs) \\
 Grupo mais produtivo (total)             & NLP2 (\num{144} pubs) \\
 Grupo mais eficiente (pubs/ano)          & NLP2 (\num{28.80}) \\
-Concentração nos 3 maiores grupos        & \SI{62.5}{\percent} \\
-Índice de concentração HHI               & \num{1975} (moderado) \\
+Concentração nos 3 maiores grupos        & \SI{62.6}{\percent} \\
+Índice de concentração HHI               & \num{1998} (moderado) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -132,16 +130,16 @@ Concentração nos 3 maiores grupos        & \SI{62.5}{\percent} \\
 \toprule
 \textbf{\#} & \textbf{Grupo} & \textbf{Total} & \textbf{Part.\ (\%)} & \textbf{Pubs/ano} \\
 \midrule
-1 & NLP2       & \num{144} & \num{34.9} & \num{28.80} \\
-2 & AGRIBIO    & \num{58}  & \num{14.0} & \num{14.50} \\
-3 & KEML       & \num{56}  & \num{13.6} & \num{14.00} \\
-4 & AI HEALTH  & \num{53}  & \num{12.8} & \num{13.25} \\
-5 & HUMANITIES & \num{53}  & \num{12.8} & \num{13.25} \\
-6 & PROINDL    & \num{21}  & \num{5.1}  & \num{10.50} \\
-7 & MClimate   & \num{15}  & \num{3.6}  & \num{7.50}  \\
-8 & OceanML    & \num{13}  & \num{3.1}  & \num{6.50}  \\
+1 & NLP2       & \num{144} & \num{35.5} & \num{28.80} \\
+2 & KEML       & \num{56}  & \num{13.8} & \num{14.00} \\
+3 & AGRIBIO    & \num{54}  & \num{13.3} & \num{10.80} \\
+4 & AI HEALTH  & \num{53}  & \num{13.1} & \num{13.25} \\
+5 & HUMANITIES & \num{50}  & \num{12.3} & \num{12.50} \\
+6 & PROINDL    & \num{21}  & \num{5.2}  & \num{10.50} \\
+7 & MClimate   & \num{15}  & \num{3.7}  & \num{7.50}  \\
+8 & OceanML    & \num{13}  & \num{3.2}  & \num{6.50}  \\
 \midrule
-\multicolumn{2}{l}{\textbf{Total}} & \num{413} & \num{100.0} & --- \\
+\multicolumn{2}{l}{\textbf{Total}} & \num{406} & \num{100.0} & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -158,12 +156,12 @@ Concentração nos 3 maiores grupos        & \SI{62.5}{\percent} \\
 \textbf{Ranking de publicações por grupo de pesquisa do C4AI.}
 Gráfico de barras horizontais ordenado de forma decrescente pelo número absoluto
 de publicações. O grupo \textbf{NLP2} lidera com \num{144} publicações
-(\SI{34.9}{\percent} do total), seguido por \textbf{AGRIBIO} com \num{58}
-(\SI{14.0}{\percent}) e \textbf{KEML} com \num{56} (\SI{13.6}{\percent}). Na
-sequência aparecem AI HEALTH e HUMANITIES, empatados com \num{53} publicações
-(\SI{12.8}{\percent} cada), e os grupos de menor volume --- PROINDL (\num{21};
-\SI{5.1}{\percent}), MClimate (\num{15}; \SI{3.6}{\percent}) e OceanML (\num{13};
-\SI{3.1}{\percent}). A liderança isolada de NLP2 evidencia a assimetria da
+(\SI{35.5}{\percent} do total), seguido por \textbf{KEML} com \num{56}
+(\SI{13.8}{\percent}) e \textbf{AGRIBIO} com \num{54} (\SI{13.3}{\percent}). Na
+sequência aparecem AI HEALTH com \num{53} (\SI{13.1}{\percent}) e HUMANITIES com
+\num{50} (\SI{12.3}{\percent}), e os grupos de menor volume --- PROINDL (\num{21};
+\SI{5.2}{\percent}), MClimate (\num{15}; \SI{3.7}{\percent}) e OceanML (\num{13};
+\SI{3.2}{\percent}). A liderança isolada de NLP2 evidencia a assimetria da
 produção entre os grupos.}
 \label{fig:ranking}
 \end{figure}
@@ -176,11 +174,10 @@ produção entre os grupos.}
 \textbf{Distribuição proporcional de publicações por grupo.}
 O gráfico de setores reforça a leitura do ranking (Figura~\ref{fig:ranking}),
 destacando que \textbf{NLP2}, sozinho, responde por cerca de um terço da
-produção (\SI{34.9}{\percent}) e que os dois maiores grupos (NLP2 e AGRIBIO)
-somam \SI{48.9}{\percent}. As fatias dos quatro grupos intermediários (KEML, AI
+produção (\SI{35.5}{\percent}) e que os dois maiores grupos (NLP2 e KEML)
+somam \SI{49.3}{\percent}. As fatias dos grupos intermediários (AGRIBIO, AI
 HEALTH, HUMANITIES) e dos três menores (PROINDL, MClimate, OceanML) revelam uma
-distribuição desigual, porém menos concentrada do que a sugerida por coletas
-anteriores não desduplicadas.}
+distribuição desigual, porém não monopolizada por um único grupo.}
 \label{fig:pizza}
 \end{figure}
 
@@ -195,9 +192,9 @@ anteriores não desduplicadas.}
 \caption[Evolução anual e tendência de crescimento]{%
 \textbf{Evolução anual de publicações e tendência de crescimento do C4AI.}
 \emph{Painel superior:} número absoluto de publicações por ano, com o ano de pico
-(\textbf{2023}, \num{199} publicações) destacado em vermelho. Observa-se o
-crescimento acelerado de 2020 (\num{5}) a 2023, passando por \num{51} em 2021 e
-\num{103} em 2022, seguido de queda acentuada em 2024 (\num{55}). \emph{Painel
+(\textbf{2023}, \num{189} publicações) destacado em vermelho. Observa-se o
+crescimento acelerado de 2020 (\num{5}) a 2023, passando por \num{50} em 2021 e
+\num{103} em 2022, seguido de queda acentuada em 2024 (\num{59}). \emph{Painel
 inferior:} a mesma série com a curva de \emph{tendência linear} (linha tracejada
 vermelha) sobreposta; a tendência permanece positiva, mas a queda de 2024 sugere
 um possível artefato de coleta incompleta dos dados desse ano, e não
@@ -245,9 +242,9 @@ incompletude dos dados do último ano.}
 Painéis individuais (\emph{small multiples}) com a série anual de cada um dos
 cinco grupos mais produtivos, permitindo comparar perfis de crescimento sem a
 sobreposição da Figura~\ref{fig:linhas}. NLP2 (\num{144} pubs) apresenta
-crescimento sustentado e o maior volume em todos os anos; AGRIBIO (\num{58} pubs)
-cresce de forma gradual até 2023; KEML (\num{56}) e AI HEALTH (\num{53}) exibem
-perfis em forma de pico, com máximo em 2023; e HUMANITIES (\num{53}) concentra
+crescimento sustentado e o maior volume em todos os anos; KEML (\num{56}) e
+AGRIBIO (\num{54}) crescem de forma gradual até 2023; AI HEALTH (\num{53}) exibe
+perfil em forma de pico, com máximo em 2023; e HUMANITIES (\num{50}) concentra
 sua produção em 2022--2023.}
 \label{fig:topgrupos}
 \end{figure}
@@ -278,8 +275,8 @@ OceanML, PROINDL) passam a compor o volume anual apenas nos dois últimos anos.}
 \caption[Taxa de produtividade por grupo]{%
 \textbf{Taxa de produtividade e relação produção \texttimes{} tempo de atividade.}
 \emph{Painel esquerdo:} taxa de produtividade (publicações por ano de atividade)
-por grupo; NLP2 lidera com \num{28.80} pubs/ano, seguido por AGRIBIO
-(\num{14.50}) e KEML (\num{14.00}). \emph{Painel direito:} dispersão entre o
+por grupo; NLP2 lidera com \num{28.80} pubs/ano, seguido por KEML
+(\num{14.00}) e AI HEALTH (\num{13.25}). \emph{Painel direito:} dispersão entre o
 número de anos ativos (eixo \textit{x}) e o total de publicações (eixo \textit{y}),
 em que o tamanho de cada círculo é proporcional à taxa de produtividade.
 Grupos como PROINDL alcançam produtividade relativamente alta (\num{10.50}
@@ -299,9 +296,9 @@ percentuais de cada grupo:
 \qquad s_i = \frac{\text{publicações do grupo } i}{\text{total de publicações}}.
 \end{equation}
 %
-O valor obtido foi de \textbf{HHI~$\approx$~\num{1975}}, situado na faixa
+O valor obtido foi de \textbf{HHI~$\approx$~\num{1998}}, situado na faixa
 \emph{moderada} (\num{1500} a \num{2500}). Esse resultado é coerente com a
-observação de que os três maiores grupos concentram \SI{62.5}{\percent} da
+observação de que os três maiores grupos concentram \SI{62.6}{\percent} da
 produção total, configurando um cenário de produção desigual, porém ainda não
 plenamente monopolizado por um único grupo.
 
@@ -317,10 +314,68 @@ igualdade perfeita (tracejada); o afastamento entre as curvas mede a desigualdad
 da distribuição de publicações entre os grupos. \emph{Painel direito:}
 participação individual (barras) e acumulada (linha vermelha) de cada grupo, com a
 referência de \SI{80}{\percent} (linha verde). Os quatro maiores grupos (NLP2,
-AGRIBIO, KEML e AI HEALTH) já ultrapassam \SI{75}{\percent} do total, ilustrando
+KEML, AGRIBIO e AI HEALTH) já ultrapassam \SI{75}{\percent} do total, ilustrando
 graficamente a concentração moderada captada pelo índice HHI.}
 \label{fig:concentracao}
 \end{figure}
+
+% ==============================================================================
+\section{Análise de co-ocorrência de termos (co-word analysis)}
+% ==============================================================================
+
+Esta seção pratica a \emph{co-word analysis} no espírito do método clássico de
+Callon, Law \& Rip (rede de palavras / rede de problematizações): extraem-se os
+termos das publicações, calcula-se a co-ocorrência entre eles e mapeia-se como os
+temas se \textbf{agrupam} (comunidades) e se \textbf{deslocam no tempo}. A rede é
+gerada pelo \emph{script} \texttt{coword\_analysis.py}.
+
+\paragraph{Fonte dos termos.}
+A base de curadoria manual traz o \texttt{Título} (mas não \emph{abstracts} nem
+palavras-chave). Os termos são, portanto, extraídos dos \textbf{títulos} das
+\num{407} publicações, após limpeza de eventual ``rabo'' bibliográfico e remoção
+de \emph{stopwords} bilíngues (PT/EN) e de ruído editorial. É uma aproximação
+honesta: o sinal é mais esparso que o de uma co-word baseada em \emph{keywords}.
+O \emph{script} \texttt{enrich\_metadata.py} permite, opcionalmente, enriquecer a
+base com \emph{abstracts} e \emph{keywords} do OpenAlex.
+
+% ── Figura 10: Rede de co-ocorrência ──────────────────────────────────────────
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{10_rede_coword.png}
+\caption[Rede de co-ocorrência de termos]{%
+\textbf{Rede de co-ocorrência de termos --- C4AI (2020--2024).}
+Cada nó é um termo (uni ou bigrama) presente nos títulos; o tamanho é
+proporcional à frequência e a cor indica a comunidade temática detectada pelo
+algoritmo de Louvain. Duas palavras se ligam quando co-ocorrem no mesmo título.
+Emergem agrupamentos coerentes que espelham os grupos de pesquisa: PLN do
+português brasileiro, dependências universais, aprendizado de máquina e profundo,
+redes neurais/classificação/grafos, IA/dados/otimização, clima, línguas
+indígenas e impacto ético-social, e um agrupamento emergente de mercado
+financeiro.}
+\label{fig:coword}
+\end{figure}
+
+% ── Figura 11: Deslocamento temporal ──────────────────────────────────────────
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{11_rede_coword_temporal.png}
+\caption[Deslocamento temático no tempo]{%
+\textbf{Deslocamento temático no tempo --- co-ocorrência por período.}
+A mesma rede, recortada em três janelas (2020--2021, 2022--2023 e 2024),
+evidencia o movimento dos problemas: em 2020--2021 o mapa é esparso e ancorado em
+PLN do português e dependências universais; em 2022--2023 --- o pico de produção
+--- a rede se adensa e se diversifica, incorporando aprendizado de máquina, clima
+e saúde; em 2024 a rede se contrai. Esse movimento ilustra graficamente como as
+problematizações do centro se agrupam e migram ao longo do período.}
+\label{fig:coword-temporal}
+\end{figure}
+
+\noindent
+\textbf{Nota metodológica.} Por se basear em títulos, esta rede capta a
+co-ocorrência lexical da produção, não o conteúdo integral dos trabalhos. A
+leitura interpretativa das ``problematizações'' permanece a cargo do/a
+pesquisador/a --- a rede é um instrumento exploratório, não um substituto da
+análise qualitativa.
 
 % ==============================================================================
 \section{Considerações finais}
@@ -328,35 +383,39 @@ graficamente a concentração moderada captada pelo índice HHI.}
 
 A produção acadêmica do C4AI no período 2020--2024 caracteriza-se por:
 \begin{itemize}
-    \item \textbf{Concentração moderada:} NLP2 e AGRIBIO respondem por
-          \SI{48.9}{\percent} das publicações; os três maiores grupos (NLP2,
-          AGRIBIO e KEML), por \SI{62.5}{\percent} (HHI moderado $\approx$
-          \num{1975}).
+    \item \textbf{Concentração moderada:} NLP2 e KEML respondem por
+          \SI{49.3}{\percent} das publicações; os três maiores grupos (NLP2,
+          KEML e AGRIBIO), por \SI{62.6}{\percent} (HHI moderado $\approx$
+          \num{1998}).
     \item \textbf{Liderança de NLP2:} o grupo é o mais produtivo tanto em volume
           total (\num{144} publicações) quanto em taxa anual (\num{28.80}
           pubs/ano), mantendo produção em todos os anos do período.
     \item \textbf{Crescimento acelerado até 2023:} o volume anual saltou de
-          \num{5} publicações em 2020 para \num{199} em 2023, com participação
+          \num{5} publicações em 2020 para \num{189} em 2023, com participação
           crescente dos grupos de saúde, conhecimento e humanidades.
     \item \textbf{Queda aparente em 2024:} provavelmente associada à coleta
           incompleta dos dados do último ano, o que recomenda cautela na
           interpretação dessa redução.
     \item \textbf{Heterogeneidade de trajetórias:} convivem grupos de
-          crescimento sustentado (NLP2, AGRIBIO) com grupos de entrada recente e
-          produção concentrada em poucos anos (MClimate, OceanML, PROINDL).
+          crescimento sustentado (NLP2, KEML, AGRIBIO) com grupos de entrada
+          recente e produção concentrada em poucos anos (MClimate, OceanML,
+          PROINDL).
 \end{itemize}
 
-\paragraph{Nota sobre a revisão dos dados.}
-Os números deste relatório resultam de uma coleta automatizada e desduplicada da
-base oficial do C4AI. Versões anteriores, baseadas em coleta manual, reportavam
-\num{569} publicações e atribuíam a liderança ao grupo AI HEALTH (\num{200}
-publicações); a investigação mostrou que esses valores estavam inflados por
-\num{170} registros duplicados --- concentrados sobretudo no grupo AI HEALTH, que
-após a desduplicação totaliza \num{53} publicações. Os indicadores aqui
-apresentados, portanto, substituem e corrigem as estimativas anteriores.
+\paragraph{Nota sobre a procedência dos dados.}
+Os números deste relatório resultam da \textbf{curadoria manual} da produção do
+centro, revisada e desduplicada pela pesquisadora (\num{407} publicações). Uma
+coleta manual anterior reportava \num{569} publicações e atribuía a liderança ao
+grupo AI HEALTH (\num{200} publicações); esses valores estavam inflados por
+registros duplicados --- sobretudo no grupo de saúde, que após a desduplicação
+totaliza \num{53} publicações. Uma coleta automatizada da base oficial
+(\texttt{scrape\_c4ai.py}) produziu, de forma independente, um total próximo
+(\num{413}), o que corrobora a ordem de grandeza adotada.
 
 \noindent
-As figuras e os indicadores aqui apresentados foram gerados automaticamente pelo
-\emph{script} de análise (\texttt{analise\_publicacoes}) a partir do arquivo de
-dados consolidado pelo \emph{script} de coleta (\texttt{scrape\_c4ai.py}).
+As figuras e os indicadores aqui apresentados foram gerados automaticamente pelos
+\emph{scripts} \texttt{analise\_publicacoes} (Figuras~1--9) e
+\texttt{coword\_analysis.py} (Figuras~10--11), a partir da base canônica
+\texttt{c4ai\_publicacoes.xlsx}, normalizada por \texttt{preparar\_base.py} sobre
+a planilha de curadoria manual.
 \end{document}

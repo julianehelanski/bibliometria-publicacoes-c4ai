@@ -11,7 +11,7 @@ temas se agrupam (comunidades) e se deslocam no tempo.
 
 IMPORTANTE — sobre a fonte dos termos
 -------------------------------------
-A base oficial desduplicada (`c4ai_publicacoes_py.xlsx`) contém **413
+A base oficial (`c4ai_publicacoes.xlsx`, curadoria manual) contém **407
 publicações** e **não traz abstracts nem palavras-chave** — apenas o `Título`.
 Portanto, esta análise extrai os termos dos TÍTULOS. É uma aproximação honesta:
 o sinal é mais esparso do que o de uma co-word baseada em keywords/abstracts.
@@ -53,7 +53,7 @@ from networkx.algorithms.community import louvain_communities
 # CONFIGURAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
 
-DEFAULT_INPUT = "c4ai_publicacoes_py.xlsx"
+DEFAULT_INPUT = "c4ai_publicacoes.xlsx"
 DEFAULT_OUTPUT = "output/coword/"
 
 # Recortes temporais (espelham os períodos usados em analise_publicacoes)
