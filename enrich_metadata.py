@@ -121,8 +121,13 @@ def main():
     args = ap.parse_args()
 
     df = pd.read_excel(args.input)
-    title_col = "Título" if "Título" in df.columns else "Titulo"
-    if title_col not in df.columns:
+    # detecta a coluna de título nos layouts conhecidos (raspado e manual)
+    title_col = next(
+        (c for c in ("Título", "Titulo", "Tìtulo do trabalho",
+                     "Título do trabalho") if c in df.columns),
+        None,
+    )
+    if title_col is None:
         raise SystemExit("ERRO: coluna de título não encontrada.")
 
     session = requests.Session()

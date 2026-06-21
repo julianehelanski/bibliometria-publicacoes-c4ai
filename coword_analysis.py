@@ -152,6 +152,11 @@ def load_data(path: str) -> pd.DataFrame:
         "Grupo de Pesquisa": "Grupo",
         "Data de publicação": "Ano",
         "Título": "Titulo",
+        # layout da planilha de curadoria manual (Drive / Power BI)
+        "Tìtulo do trabalho": "Titulo",
+        "Título do trabalho": "Titulo",
+        "Ano de Publicação": "Ano",
+        "Tipo de Publicação": "Tipo_Publicacao",
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
 
