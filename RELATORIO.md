@@ -168,7 +168,23 @@ Esta seção pratica a *co-word analysis* no espírito do método clássico de C
 
 **Saídas geradas** (em `output/coword/`): além das duas figuras, o script produz uma **rede interativa navegável** (`rede_coword_interativa.html`) e três tabelas — lista de arestas (`coword_arestas.xlsx`), termos por comunidade (`coword_nos_comunidades.xlsx`) e termos por período (`coword_termos_por_periodo.xlsx`).
 
-> **Nota metodológica.** Por se basear em títulos, esta rede capta a co-ocorrência lexical da produção, não o conteúdo integral dos trabalhos; termos genéricos de *venue* e método foram filtrados, mas alguma esparsidade é inerente. A leitura interpretativa das "problematizações" (no sentido do livro) permanece a cargo do/a pesquisador/a — a rede é um instrumento exploratório, não um substituto da análise qualitativa.
+### 6.1 Leitura interpretativa dos mapas
+
+Tomados em conjunto, os dois mapas (Figuras 10 e 11) sustentam quatro leituras sobre o vocabulário de problemas do C4AI.
+
+**(a) O centro de gravidade temático é a língua portuguesa / PLN.** Três das maiores comunidades detectadas são linguísticas e, somadas, dominam a rede: *universal dependencies · dependencies · brasileiro · português* (anotação sintática e treebanks); *brazilian portuguese · speech · corpus · recognition* (fala e corpora do português); e *indigenous languages · indigenous · social · ethical* (línguas indígenas). Essa centralidade lexical é coerente com a bibliometria — o NLP2 responde por 144 das 407 publicações: **o mapa de palavras mostra qualitativamente o que o ranking mostra quantitativamente**, ou seja, que o problema nuclear do centro é o processamento do português.
+
+**(b) Os pares mais coesos revelam as problematizações mais cristalizadas.** As co-ocorrências mais fortes da rede não são genéricas, mas termos técnicos travados como entidades: `universal dependencies` (29 co-ocorrências), `brazilian portuguese` (22), `indigenous languages` (15), `artificial intelligence` (15) e `neural networks` (14). São objetos-problema recorrentes o bastante para terem se consolidado no discurso do centro.
+
+**(c) Um núcleo genérico costura os grupos.** A comunidade *artificial intelligence · data · detection · optimization* funciona como vocabulário-ponte — termos compartilhados por quase todos os grupos —, articulando os temas específicos em torno de uma linguagem comum de "IA aplicada".
+
+**(d) Os grupos menores se nomeiam pelo método, não pelo domínio.** Termos como *ocean* (OceanML) aparecem dentro da comunidade de *neural networks*, e *covid · segmentation* (saúde) dentro da de *deep learning*. Oceano, clima e saúde não formam ilhas lexicais próprias: ancoram-se nos clusters de técnica. Isso sugere que a identidade desses grupos, no plano do título, é **metodológica** (IA/aprendizado de máquina) antes de ser temática.
+
+**Deslocamento no tempo (Figura 11).** A leitura temporal acrescenta uma trajetória em três atos. Em **2020–2021** o vocabulário é fundacional e ancorado na construção de recursos do português (*brazilian, portuguese, universal dependencies*). Em **2022–2023**, o pico de produção, o léxico explode e se diversifica para métodos de aprendizado de máquina e IA em geral (*data, classification, neural, detection, artificial*). Em **2024**, a rede se contrai, mas emerge um foco novo: *indigenous languages, corpus, speech, processing*. O movimento agregado vai de **"construir o português computacional" → "diversificar em IA/ML" → "voltar-se às línguas indígenas e de baixos recursos"** — exatamente o tipo de deslocamento de problematização que o método de co-word busca evidenciar.
+
+**Síntese.** No plano de seu vocabulário, o C4AI é um centro de PLN do português que se apresenta externamente como "IA", com os grupos não-linguísticos orbitando os métodos de aprendizado de máquina, e cuja fronteira mais recente (2024) se desloca para as línguas indígenas e a fala. Ressalva: o foco indígena de 2024 pode estar amplificado pela coleta provavelmente incompleta do último ano (59 publicações, contra 189 em 2023) — é um sinal real, mas a ser confirmado quando o ano fechar.
+
+> **Nota metodológica.** Por se basear em títulos, esta rede capta a co-ocorrência lexical da produção, não o conteúdo integral dos trabalhos; termos genéricos de *venue* e método foram filtrados, mas alguma esparsidade é inerente. A rede é um instrumento exploratório que apoia — não substitui — a análise qualitativa das "problematizações".
 
 ---
 
