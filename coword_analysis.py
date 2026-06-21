@@ -329,8 +329,14 @@ def draw_html(G, node2comm, path):
     for u, v in G.edges():
         net.add_edge(u, v, value=G[u][v]["weight"])
     net.set_options('{"physics": {"stabilization": {"iterations": 200}}}')
-    # write_html evita a dependência de notebook/template
-    net.write_html(str(path), notebook=False)
+    # Gera o HTML e grava em UTF-8 explicitamente. Em Windows, o write_html do
+    # pyvis usa o codec padrão (cp1252) e quebra com caracteres acentuados
+    # (UnicodeEncodeError). Gerar a string e escrever com encoding="utf-8" evita.
+    try:
+        html = net.generate_html(notebook=False)
+    except TypeError:
+        html = net.generate_html()
+    Path(path).write_text(html, encoding="utf-8")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
