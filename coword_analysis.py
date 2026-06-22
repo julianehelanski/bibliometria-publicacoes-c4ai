@@ -245,7 +245,7 @@ def detect_communities(G):
 # VISUALIZAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
 
-def draw_png(G, node2comm, path, title, top_labels=40):
+def draw_png(G, node2comm, path, top_labels=40):
     """Desenha a rede em PNG (matplotlib), rotulando os termos mais centrais.
 
     Usa um layout mais espalhado e a biblioteca adjustText (quando disponível)
@@ -297,7 +297,6 @@ def draw_png(G, node2comm, path, title, top_labels=40):
         print("  ⚠ adjustText não instalado — rótulos podem se sobrepor "
               "(pip install adjustText).")
 
-    ax.set_title(title, fontsize=18, fontweight="bold")
     ax.axis("off")
     ax.margins(0.08)
     fig.tight_layout()
@@ -350,9 +349,7 @@ def draw_temporal_png(period_graphs, path):
         ax.set_title(label, fontsize=15, fontweight="bold")
         ax.axis("off")
         ax.margins(0.1)
-    fig.suptitle("Deslocamento temático no tempo — co-ocorrência de termos por período",
-                 fontsize=16, fontweight="bold")
-    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    fig.tight_layout()
     fig.savefig(path, dpi=140, bbox_inches="tight")
     plt.close(fig)
 
@@ -469,8 +466,7 @@ def main():
     print(f"Rede global: {G.number_of_nodes()} termos, "
           f"{G.number_of_edges()} arestas, {len(comms)} comunidades")
 
-    draw_png(G, node2comm, outdir / "10_rede_coword.png",
-             "Rede de co-ocorrência de termos — C4AI (2020–2024)")
+    draw_png(G, node2comm, outdir / "10_rede_coword.png")
     if not args.no_html:
         draw_html(G, node2comm, outdir / "rede_coword_interativa.html")
 
