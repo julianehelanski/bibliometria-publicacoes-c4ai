@@ -131,11 +131,15 @@ ROMAN = {"i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi",
 
 ALL_STOPWORDS = PT_STOPWORDS | EN_STOPWORDS | DOMAIN_STOPWORDS | ROMAN
 
-# Paleta para comunidades (reaproveitada ciclicamente)
-PALETTE = [
-    "#4E79A7", "#F28E2B", "#59A14F", "#E15759", "#B07AA1", "#76B7B2",
-    "#EDC948", "#FF9DA7", "#9C755F", "#BAB0AC", "#1B9E77", "#D95F02",
-]
+# Paleta de comunidades: Okabe-Ito estendido (identidade visual da tese),
+# à prova de daltonismo, reaproveitada ciclicamente.
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from estilo_c4ai import (  # noqa: E402
+    COR_ARESTA, _TXT, _TXT_FRACO, cor_categorica,
+)
+PALETTE = cor_categorica(18)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -269,18 +273,19 @@ def draw_png(G, node2comm, path, title, top_labels=40):
 
     fig, ax = plt.subplots(figsize=(22, 16))
     nx.draw_networkx_edges(
-        G, pos, ax=ax, alpha=0.15,
-        width=[0.3 + 2.2 * (w / maxw) for w in weights], edge_color="#999999",
+        G, pos, ax=ax, alpha=0.18,
+        width=[0.3 + 2.2 * (w / maxw) for w in weights], edge_color=COR_ARESTA,
     )
     nx.draw_networkx_nodes(
         G, pos, ax=ax, node_size=sizes, node_color=colors,
-        alpha=0.9, linewidths=0.5, edgecolors="white",
+        alpha=0.95, linewidths=0.8, edgecolors="white",
     )
-    # rotula apenas os top-N termos por frequência (legibilidade)
+    # rotula apenas os top-N termos por frequência (legibilidade); sem negrito,
+    # em cinza escuro (identidade visual da tese)
     top = sorted(G.nodes(), key=lambda n: freqs.get(n, 0), reverse=True)[:top_labels]
     texts = [
-        ax.text(pos[n][0], pos[n][1], n, fontsize=9, fontweight="bold",
-                color="#111111", ha="center", va="center",
+        ax.text(pos[n][0], pos[n][1], n, fontsize=9,
+                color=_TXT, ha="center", va="center",
                 bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                           alpha=0.7))
         for n in top
@@ -297,7 +302,9 @@ def draw_png(G, node2comm, path, title, top_labels=40):
         print("  ⚠ adjustText não instalado — rótulos podem se sobrepor "
               "(pip install adjustText).")
 
-    ax.set_title(title, fontsize=18, fontweight="bold")
+    # Sem título embutido: o detalhe vai como nota em itálico cinza no rodapé.
+    ax.text(0, -0.01, title, transform=ax.transAxes, fontsize=11,
+            style="italic", color=_TXT_FRACO, va="top")
     ax.axis("off")
     ax.margins(0.08)
     fig.tight_layout()
@@ -318,7 +325,8 @@ def draw_temporal_png(period_graphs, path):
         adjust_text = None
     for ax, (label, (G, node2comm)) in zip(axes, period_graphs):
         if G.number_of_nodes() == 0:
-            ax.set_title(f"{label}\n(sem termos acima do limiar)", fontsize=13)
+            ax.set_title(f"{label} · sem termos acima do limiar", fontsize=12,
+                         loc="left", color="#5a5a5a")
             ax.axis("off")
             continue
         # mantém só componentes com >= 3 termos (evita que díades soltas
@@ -330,15 +338,15 @@ def draw_temporal_png(period_graphs, path):
         freqs = nx.get_node_attributes(G, "freq")
         sizes = [40 + 45 * (freqs.get(nd, 1) ** 0.5) for nd in G.nodes()]
         colors = [PALETTE[node2comm.get(nd, 0) % len(PALETTE)] for nd in G.nodes()]
-        nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.13, edge_color="#999")
+        nx.draw_networkx_edges(G, pos, ax=ax, alpha=0.16, edge_color=COR_ARESTA)
         nx.draw_networkx_nodes(G, pos, ax=ax, node_size=sizes,
-                               node_color=colors, alpha=0.9,
-                               linewidths=0.4, edgecolors="white")
+                               node_color=colors, alpha=0.95,
+                               linewidths=0.7, edgecolors="white")
         top = sorted(G.nodes(), key=lambda nd: freqs.get(nd, 0),
                      reverse=True)[:12]
         texts = [
-            ax.text(pos[nd][0], pos[nd][1], nd, fontsize=8, fontweight="bold",
-                    ha="center", va="center",
+            ax.text(pos[nd][0], pos[nd][1], nd, fontsize=8,
+                    color=_TXT, ha="center", va="center",
                     bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none",
                               alpha=0.7))
             for nd in top
@@ -347,12 +355,13 @@ def draw_temporal_png(period_graphs, path):
             adjust_text(texts, ax=ax, expand=(1.3, 1.5),
                         force_text=(0.3, 0.5),
                         arrowprops=dict(arrowstyle="-", color="#cccccc", lw=0.4))
-        ax.set_title(label, fontsize=15, fontweight="bold")
+        ax.set_title(label, fontsize=13, loc="left", color="#5a5a5a")
         ax.axis("off")
         ax.margins(0.1)
-    fig.suptitle("Deslocamento temático no tempo — co-ocorrência de termos por período",
-                 fontsize=16, fontweight="bold")
-    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    # Sem título geral: nota em itálico cinza no rodapé da figura.
+    fig.text(0.01, 0.01, "Deslocamento temático no tempo: co-ocorrência de "
+             "termos por período.", fontsize=10, style="italic", color=_TXT_FRACO)
+    fig.tight_layout(rect=[0, 0.03, 1, 1])
     fig.savefig(path, dpi=140, bbox_inches="tight")
     plt.close(fig)
 

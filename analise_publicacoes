@@ -21,6 +21,15 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from estilo_c4ai import (  # noqa: E402
+    CMAP_SEQUENCIAL, COR_SERIE, _TXT, _TXT_FRACO, aplicar_rcparams,
+    cor_categorica, dotplot, estilo_editorial, eixo_ptbr, linha_bolinha,
+    nota_rodape, num_ptbr, pct_ptbr,
+)
+
 # ──────────────────────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO
 # ──────────────────────────────────────────────────────────────────────────────
@@ -47,14 +56,8 @@ PERIODOS = {
 
 
 def configure_plots():
-    plt.style.use("default")
-    sns.set_palette("husl")
-    plt.rcParams.update({
-        "figure.figsize":  (14, 7),
-        "font.size":       10,
-        "axes.titlesize":  14,
-        "axes.labelsize":  12,
-    })
+    aplicar_rcparams()
+    plt.rcParams["figure.figsize"] = (14, 7)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -152,194 +155,217 @@ def save(fig, outdir: Path, filename: str):
 
 
 def plot_ranking(grupos_dist: pd.Series, total: int, outdir: Path):
-    cores = sns.color_palette("Spectral", n_colors=len(grupos_dist))
-    fig, ax = plt.subplots(figsize=(14, 8))
-
-    ax.barh(range(len(grupos_dist)), grupos_dist.values, color=cores)
-    ax.set_yticks(range(len(grupos_dist)))
-    ax.set_yticklabels(grupos_dist.index)
-    ax.set_xlabel("Número de Publicações", fontweight="bold")
-    ax.grid(axis="x", alpha=0.3)
-    ax.invert_yaxis()
-
-    for i, v in enumerate(grupos_dist.values):
-        ax.text(v + 0.5, i, f"{v} ({v/total*100:.1f}%)", va="center", fontweight="bold", fontsize=10)
-
+    # Dot plot de Cleveland (menor embaixo); rótulo = nº (pct%).
+    serie = grupos_dist.sort_values(ascending=True)
+    labels = list(serie.index)
+    vals = list(serie.values)
+    rot = [f"{num_ptbr(v)} ({pct_ptbr(v / total * 100)}%)" for v in vals]
+    fig, ax = plt.subplots(figsize=(13, 8))
+    dotplot(ax, labels, vals, COR_SERIE, rotulos=rot)
+    ax.set_xlabel("publicações no período", fontsize=9, color=_TXT_FRACO)
+    nota_rodape(ax, f"Publicações por grupo de pesquisa do C4AI · N = {num_ptbr(total)}.")
     plt.tight_layout()
     save(fig, outdir, "1_ranking_grupos.png")
 
 
 def plot_pie(grupos_dist: pd.Series, outdir: Path):
-    cores = sns.color_palette("Spectral", n_colors=len(grupos_dist))
-    fig, ax = plt.subplots(figsize=(12, 12))
-
-    wedges, texts, autotexts = ax.pie(
-        grupos_dist.values,
-        labels=grupos_dist.index,
-        autopct="%1.1f%%",
-        startangle=90,
-        colors=cores,
-        textprops={"fontsize": 11, "fontweight": "bold"},
-    )
-    for at in autotexts:
-        at.set_color("white")
-        at.set_fontsize(10)
-        at.set_fontweight("bold")
-
+    # Pizza substituída por dot plot de participação (% do total).
+    total = grupos_dist.sum()
+    serie = grupos_dist.sort_values(ascending=True)
+    labels = list(serie.index)
+    vals = [v / total * 100 for v in serie.values]
+    rot = [f"{pct_ptbr(v)}%" for v in vals]
+    fig, ax = plt.subplots(figsize=(13, 8))
+    dotplot(ax, labels, vals, COR_SERIE, rotulos=rot)
+    ax.set_xlabel("participação no total (%)", fontsize=9, color=_TXT_FRACO)
+    nota_rodape(ax, "Participação de cada grupo no total de publicações do C4AI.")
     plt.tight_layout()
     save(fig, outdir, "2_pizza_grupos.png")
 
 
 def plot_temporal(pub_ano: pd.Series, outdir: Path):
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10))
-
-    bars = ax1.bar(pub_ano.index, pub_ano.values, color="#2E86AB", edgecolor="black", linewidth=1.5)
-    ano_max = pub_ano.idxmax()
-    bars[list(pub_ano.index).index(ano_max)].set_color("#E74C3C")
-    for ano, val in pub_ano.items():
-        ax1.text(ano, val + 0.5, str(val), ha="center", va="bottom", fontweight="bold", fontsize=10)
-    ax1.set(xlabel="Ano", ylabel="Número de Publicações")
-    ax1.grid(axis="y", alpha=0.3)
-
-    ax2.plot(pub_ano.index, pub_ano.values, marker="o", linewidth=3, markersize=10, color="#9B59B6", label="Publicações")
-    ax2.fill_between(pub_ano.index, pub_ano.values, alpha=0.3, color="#9B59B6")
-    z = np.polyfit(pub_ano.index, pub_ano.values, 1)
-    ax2.plot(pub_ano.index, np.poly1d(z)(pub_ano.index), "--", color="red", linewidth=2, alpha=0.7, label="Tendência Linear")
-    ax2.set(xlabel="Ano", ylabel="Número de Publicações")
-    ax2.legend(fontsize=11)
-    ax2.grid(True, alpha=0.3)
-
+    # Série temporal como linha com bolinhas (sem painel de barras).
+    fig, ax = plt.subplots(figsize=(12, 6))
+    x = list(pub_ano.index)
+    y = list(pub_ano.values)
+    linha_bolinha(ax, x, y, COR_SERIE)
+    z = np.polyfit(x, y, 1)
+    ax.plot(x, np.poly1d(z)(x), "--", color=_TXT_FRACO, linewidth=1.4,
+            alpha=0.8, zorder=1, label="tendência linear")
+    ax.set_xlabel("ano", fontsize=9, color=_TXT_FRACO)
+    ax.set_ylabel("publicações", fontsize=9, color=_TXT_FRACO)
+    ax.set_xticks(x)
+    ax.set_ylim(0, max(y) * 1.18)
+    eixo_ptbr(ax, "y")
+    ax.legend(loc="upper left", frameon=False, fontsize=9)
+    nota_rodape(ax, "Evolução anual das publicações do C4AI; linha tracejada = tendência linear.")
     plt.tight_layout()
     save(fig, outdir, "3_evolucao_temporal_geral.png")
 
 
 def plot_heatmap(df: pd.DataFrame, outdir: Path):
     crosstab = pd.crosstab(df["Grupo"], df["Ano"])
-    fig, ax = plt.subplots(figsize=(16, 10))
+    fig, ax = plt.subplots(figsize=(14, 9))
     sns.heatmap(
-        crosstab, annot=True, fmt="d", cmap="YlOrRd",
-        cbar_kws={"label": "Número de Publicações"},
-        linewidths=0.5, linecolor="gray", ax=ax,
+        crosstab, annot=True, fmt="d", cmap=CMAP_SEQUENCIAL,
+        cbar_kws={"label": "publicações"},
+        linewidths=0.5, linecolor="white", ax=ax,
+        annot_kws={"fontsize": 8, "color": "#333333"},
     )
-    ax.set(xlabel="Ano", ylabel="Grupo de Pesquisa")
+    ax.set_xlabel("ano", fontsize=9, color=_TXT_FRACO)
+    ax.set_ylabel("grupo de pesquisa", fontsize=9, color=_TXT_FRACO)
+    ax.tick_params(labelsize=9)
     plt.tight_layout()
     save(fig, outdir, "4_heatmap_grupo_ano.png")
 
 
 def plot_all_groups_lines(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path):
-    cores = sns.color_palette("tab10", n_colors=len(grupos_dist))
-    fig, ax = plt.subplots(figsize=(16, 10))
-
-    for i, grupo in enumerate(grupos_dist.index):
+    grupos = list(grupos_dist.index)
+    cores = cor_categorica(len(grupos))
+    fig, ax = plt.subplots(figsize=(15, 9))
+    anos_todos = sorted(df["Ano"].unique())
+    for i, grupo in enumerate(grupos):
         sub = df[df["Grupo"] == grupo]
         serie = sub["Ano"].value_counts().sort_index()
-        ax.plot(serie.index, serie.values, marker="o", linewidth=2.5, markersize=8, label=grupo, color=cores[i])
-
-    ax.set(xlabel="Ano", ylabel="Número de Publicações")
-    ax.legend(title="Grupo de Pesquisa", fontsize=10, title_fontsize=11, loc="upper left", framealpha=0.9)
-    ax.grid(True, alpha=0.3)
+        ax.plot(serie.index, serie.values, color=cores[i], linewidth=2,
+                zorder=2, label=grupo)
+        ax.scatter(serie.index, serie.values, s=90, color=cores[i],
+                   edgecolors="white", linewidths=1.2, zorder=3)
+    ax.set_xlabel("ano", fontsize=9, color=_TXT_FRACO)
+    ax.set_ylabel("publicações", fontsize=9, color=_TXT_FRACO)
+    ax.set_xticks(anos_todos)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    ax.grid(axis="y", linestyle=":", linewidth=0.6, color="#e3e3e3", zorder=0)
+    # Legenda sem moldura à direita (8 grupos convergem e colidiriam se
+    # rotulados no fim da linha).
+    ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.5), frameon=False,
+              fontsize=9, handlelength=1.4)
+    nota_rodape(ax, "Evolução anual por grupo de pesquisa do C4AI.")
     plt.tight_layout()
     save(fig, outdir, "5_evolucao_todos_grupos.png")
 
 
 def plot_productivity(produtividade: pd.DataFrame, outdir: Path):
-    cores = sns.color_palette("viridis", n_colors=len(produtividade))
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 8))
+    # Painel 1: dot plot de produtividade (pubs/ano). Painel 2: bolha
+    # (anos ativos x total), área = produtividade, bolinha de borda branca.
+    prod = produtividade.sort_values("Publicacoes_por_Ano", ascending=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(17, 8))
 
-    ax1.barh(range(len(produtividade)), produtividade["Publicacoes_por_Ano"], color=cores)
-    ax1.set_yticks(range(len(produtividade)))
-    ax1.set_yticklabels(produtividade["Grupo"])
-    ax1.set(xlabel="Publicações por Ano")
-    ax1.grid(axis="x", alpha=0.3)
-    ax1.invert_yaxis()
-    for i, v in enumerate(produtividade["Publicacoes_por_Ano"]):
-        ax1.text(v + 0.1, i, f"{v:.2f}", va="center", fontweight="bold", fontsize=10)
+    labels = list(prod["Grupo"])
+    vals = list(prod["Publicacoes_por_Ano"])
+    rot = [pct_ptbr(v, 2) for v in vals]
+    dotplot(ax1, labels, vals, COR_SERIE, rotulos=rot)
+    ax1.set_xlabel("publicações por ano", fontsize=9, color=_TXT_FRACO)
 
     ax2.scatter(
         produtividade["Anos_Ativos"], produtividade["Total_Publicacoes"],
-        s=produtividade["Publicacoes_por_Ano"] * 50,
-        c=range(len(produtividade)), cmap="viridis", alpha=0.6, edgecolors="black", linewidth=2,
+        s=produtividade["Publicacoes_por_Ano"] * 55,
+        color=COR_SERIE, alpha=0.85, edgecolors="white", linewidth=1.4, zorder=3,
     )
     for _, row in produtividade.iterrows():
         ax2.annotate(row["Grupo"], (row["Anos_Ativos"], row["Total_Publicacoes"]),
-                     xytext=(5, 5), textcoords="offset points", fontsize=9, fontweight="bold")
-    ax2.set(xlabel="Anos Ativos", ylabel="Total de Publicações")
-    ax2.grid(True, alpha=0.3)
-
+                     xytext=(7, 7), textcoords="offset points", fontsize=8.5,
+                     color=_TXT)
+    ax2.set_xlabel("anos ativos", fontsize=9, color=_TXT_FRACO)
+    ax2.set_ylabel("total de publicações", fontsize=9, color=_TXT_FRACO)
+    for sp in ("top", "right"):
+        ax2.spines[sp].set_visible(False)
+    ax2.grid(True, linestyle=":", linewidth=0.6, color="#e3e3e3", zorder=0)
+    nota_rodape(ax1, "Produtividade por grupo; o tamanho da bolha à direita é proporcional à taxa anual.")
     plt.tight_layout()
     save(fig, outdir, "6_produtividade_grupos.png")
 
 
 def plot_top_groups(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path):
-    cores = sns.color_palette("Spectral", n_colors=len(grupos_dist))
-    top = grupos_dist.head(5).index
-    fig, axes = plt.subplots(2, 3, figsize=(20, 12))
+    cores = cor_categorica(len(grupos_dist))
+    top = list(grupos_dist.head(5).index)
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10))
     axes = axes.flatten()
-
     for i, grupo in enumerate(top):
         sub = df[df["Grupo"] == grupo]
         serie = sub["Ano"].value_counts().sort_index()
-        axes[i].plot(serie.index, serie.values, marker="o", linewidth=2.5, markersize=8, color=cores[i])
-        axes[i].fill_between(serie.index, serie.values, alpha=0.3, color=cores[i])
-        axes[i].set_title(f"{grupo}\n({len(sub)} publicações)", fontweight="bold", fontsize=12)
-        axes[i].set(xlabel="Ano", ylabel="Publicações")
-        axes[i].grid(True, alpha=0.3)
-
+        x, y = list(serie.index), list(serie.values)
+        linha_bolinha(axes[i], x, y, cores[i])
+        axes[i].set_title(f"{grupo} · {num_ptbr(len(sub))} publicações",
+                          fontsize=10, loc="left", color="#5a5a5a")
+        axes[i].set_xlabel("ano", fontsize=8, color=_TXT_FRACO)
+        axes[i].set_xticks(x)
+        axes[i].set_ylim(0, max(y) * 1.22)
     for j in range(len(top), 6):
         axes[j].axis("off")
-
     plt.tight_layout()
     save(fig, outdir, "7_comparacao_top_grupos.png")
 
 
 def plot_stacked(df: pd.DataFrame, grupos_dist: pd.Series, outdir: Path):
+    # Barras empilhadas -> uma linha com bolinhas por grupo, total no topo.
     anos = sorted(df["Ano"].unique())
-    cores = sns.color_palette("Spectral", n_colors=len(grupos_dist))
-    fig, ax = plt.subplots(figsize=(16, 10))
-    bottom = np.zeros(len(anos))
-
-    for i, grupo in enumerate(grupos_dist.index):
+    grupos = list(grupos_dist.index)
+    cores = cor_categorica(len(grupos))
+    fig, ax = plt.subplots(figsize=(15, 9))
+    totais = [len(df[df["Ano"] == a]) for a in anos]
+    gmax = 1
+    for i, grupo in enumerate(grupos):
         vals = [len(df[(df["Grupo"] == grupo) & (df["Ano"] == a)]) for a in anos]
-        ax.bar(anos, vals, bottom=bottom, label=grupo, color=cores[i], edgecolor="white", linewidth=0.5)
-        bottom += np.array(vals, dtype=float)
-
-    ax.set(xlabel="Ano", ylabel="Número de Publicações")
-    ax.legend(title="Grupo de Pesquisa", bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=10)
-    ax.grid(axis="y", alpha=0.3)
+        gmax = max(gmax, max(vals))
+        ax.plot(anos, vals, color=cores[i], linewidth=2, zorder=2, label=grupo)
+        ax.scatter(anos, vals, s=90, color=cores[i], edgecolors="white",
+                   linewidths=1.2, zorder=3)
+    # Total do ano em cinza, numa faixa-cabeçalho acima das linhas (a escala
+    # do eixo segue o máximo por grupo, não o total, para não esvaziar a área).
+    y_tot = gmax * 1.16
+    for a, tot in zip(anos, totais):
+        ax.annotate(num_ptbr(tot), xy=(a, y_tot), ha="center", fontsize=8.5,
+                    color=_TXT_FRACO)
+    ax.text(anos[0], gmax * 1.24, "total no ano:", fontsize=8, style="italic",
+            color=_TXT_FRACO)
+    ax.set_xlabel("ano", fontsize=9, color=_TXT_FRACO)
+    ax.set_ylabel("publicações", fontsize=9, color=_TXT_FRACO)
+    ax.set_xticks(anos)
+    ax.set_ylim(0, gmax * 1.30)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    ax.grid(axis="y", linestyle=":", linewidth=0.6, color="#e3e3e3", zorder=0)
+    ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.5), frameon=False,
+              fontsize=9, handlelength=1.4)
+    nota_rodape(ax, "Composição anual por grupo; o total do ano aparece em cinza no topo.")
     plt.tight_layout()
     save(fig, outdir, "8_composicao_temporal.png")
 
 
 def plot_concentration(grupos_dist: pd.Series, outdir: Path):
-    cores = sns.color_palette("Spectral", n_colors=len(grupos_dist))
     participacao = (grupos_dist / grupos_dist.sum() * 100).sort_values(ascending=False)
-    participacao_acum = participacao.cumsum()
-
     ordered = grupos_dist.sort_values(ascending=False)
-    freq_acum = ordered.cumsum() / ordered.sum() * 100
-    grupos_acum = np.arange(1, len(ordered) + 1) / len(ordered) * 100
+    freq_acum = (ordered.cumsum() / ordered.sum() * 100).values
+    grupos_acum = (np.arange(1, len(ordered) + 1) / len(ordered) * 100)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 7))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(17, 7))
 
-    ax1.plot(grupos_acum, freq_acum, marker="o", linewidth=2.5, markersize=8, color="#E74C3C", label="Curva de Lorenz")
-    ax1.plot([0, 100], [0, 100], "--", color="gray", linewidth=2, alpha=0.7, label="Igualdade Perfeita")
-    ax1.fill_between(grupos_acum, freq_acum, grupos_acum, alpha=0.3, color="#E74C3C")
-    ax1.set(xlabel="% Acumulada de Grupos", ylabel="% Acumulada de Publicações")
-    ax1.legend(fontsize=11)
-    ax1.grid(True, alpha=0.3)
+    # Lorenz: curva com bolinhas + diagonal de igualdade.
+    gx = [0.0] + list(grupos_acum)
+    gy = [0.0] + list(freq_acum)
+    ax1.plot([0, 100], [0, 100], "--", color=_TXT_FRACO, linewidth=1.4,
+             alpha=0.8, zorder=1, label="igualdade perfeita")
+    ax1.plot(gx, gy, color=COR_SERIE, linewidth=2, zorder=2, label="curva de Lorenz")
+    ax1.scatter(gx[1:], gy[1:], s=90, color=COR_SERIE, edgecolors="white",
+                linewidths=1.2, zorder=3)
+    ax1.fill_between(gx, gy, gx, alpha=0.12, color=COR_SERIE, zorder=0)
+    ax1.set_xlabel("% acumulada de grupos", fontsize=9, color=_TXT_FRACO)
+    ax1.set_ylabel("% acumulada de publicações", fontsize=9, color=_TXT_FRACO)
+    ax1.legend(loc="upper left", frameon=False, fontsize=9)
+    for sp in ("top", "right"):
+        ax1.spines[sp].set_visible(False)
+    ax1.grid(True, linestyle=":", linewidth=0.6, color="#e3e3e3", zorder=0)
 
-    ax2.bar(range(len(participacao)), participacao.values, color=cores, edgecolor="black", linewidth=1)
-    ax2.plot(range(len(participacao_acum)), participacao_acum.values,
-             marker="o", color="red", linewidth=2.5, markersize=8, label="% Acumulada")
-    ax2.axhline(y=80, color="green", linestyle="--", linewidth=2, alpha=0.7, label="80% das publicações")
-    ax2.set_xticks(range(len(participacao)))
-    ax2.set_xticklabels(participacao.index, rotation=45, ha="right")
-    ax2.set(ylabel="Participação (%)")
-    ax2.legend(fontsize=11)
-    ax2.grid(axis="y", alpha=0.3)
-    for i, (v, _) in enumerate(zip(participacao.values, participacao_acum.values)):
-        ax2.text(i, v + 0.5, f"{v:.1f}%", ha="center", va="bottom", fontsize=8, fontweight="bold")
-
+    # Participação por grupo: dot plot (do menor para o maior).
+    part = participacao.sort_values(ascending=True)
+    labels = list(part.index)
+    vals = list(part.values)
+    rot = [f"{pct_ptbr(v)}%" for v in vals]
+    dotplot(ax2, labels, vals, COR_SERIE, rotulos=rot)
+    ax2.set_xlabel("participação no total (%)", fontsize=9, color=_TXT_FRACO)
+    nota_rodape(ax1, "Concentração da produção entre os grupos: curva de Lorenz (esq.) e participação por grupo (dir.).")
     plt.tight_layout()
     save(fig, outdir, "9_analise_concentracao.png")
 
