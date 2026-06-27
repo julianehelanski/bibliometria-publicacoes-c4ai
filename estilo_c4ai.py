@@ -147,6 +147,44 @@ def linha_bolinha(ax, x, y, cor, rotulos=None, sufixo="") -> None:
     ax.grid(axis="y", linestyle=":", linewidth=0.6, color="#e3e3e3", zorder=0)
 
 
+def bolha_matriz(ax, matriz, cmap=CMAP_SEQUENCIAL, s_min=40, s_max=900):
+    """Matriz como grade de bolinhas (balloon plot) no lugar de heatmap.
+
+    Em cada cruzamento linha×coluna entra uma bolinha cuja área codifica o
+    valor e cuja cor segue ``cmap`` (viridis). Devolve o PathCollection."""
+    rows = list(matriz.index)
+    cols = list(matriz.columns)
+    vmax = 1.0
+    for r in range(len(rows)):
+        for c in range(len(cols)):
+            vmax = max(vmax, float(matriz.iat[r, c]))
+    xs, ys, sizes, vals = [], [], [], []
+    for i in range(len(rows)):
+        for j in range(len(cols)):
+            v = float(matriz.iat[i, j])
+            if v <= 0:
+                continue
+            xs.append(j)
+            ys.append(i)
+            sizes.append(s_min + (s_max - s_min) * (v / vmax))
+            vals.append(v)
+    sc = ax.scatter(xs, ys, s=sizes, c=vals, cmap=cmap, zorder=3,
+                    edgecolors="white", linewidths=0.8)
+    ax.set_xticks(range(len(cols)))
+    ax.set_xticklabels(cols, fontsize=9, color=_TXT)
+    ax.set_yticks(range(len(rows)))
+    ax.set_yticklabels(rows, fontsize=9, color=_TXT)
+    ax.set_xlim(-0.6, len(cols) - 0.4)
+    ax.set_ylim(-0.6, len(rows) - 0.4)
+    ax.invert_yaxis()
+    ax.set_axisbelow(True)
+    ax.grid(True, color="#eef0f2", linewidth=0.8, zorder=0)
+    ax.tick_params(left=False, bottom=False)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    return sc
+
+
 def dumbbell(ax, labels, series, cores) -> None:
     n = len(labels)
     y = list(range(n))

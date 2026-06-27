@@ -26,8 +26,8 @@ from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent))
 from estilo_c4ai import (  # noqa: E402
     CMAP_SEQUENCIAL, COR_SERIE, _TXT, _TXT_FRACO, aplicar_rcparams,
-    cor_categorica, dotplot, estilo_editorial, eixo_ptbr, linha_bolinha,
-    nota_rodape, num_ptbr, pct_ptbr,
+    bolha_matriz, cor_categorica, dotplot, estilo_editorial, eixo_ptbr,
+    linha_bolinha, nota_rodape, num_ptbr, pct_ptbr,
 )
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -204,17 +204,16 @@ def plot_temporal(pub_ano: pd.Series, outdir: Path):
 
 
 def plot_heatmap(df: pd.DataFrame, outdir: Path):
+    # Heatmap -> grade de bolinhas (tamanho + viridis = nº de publicações).
     crosstab = pd.crosstab(df["Grupo"], df["Ano"])
-    fig, ax = plt.subplots(figsize=(14, 9))
-    sns.heatmap(
-        crosstab, annot=True, fmt="d", cmap=CMAP_SEQUENCIAL,
-        cbar_kws={"label": "publicações"},
-        linewidths=0.5, linecolor="white", ax=ax,
-        annot_kws={"fontsize": 8, "color": "#333333"},
-    )
+    # ordena linhas por volume total (maior em cima)
+    crosstab = crosstab.loc[crosstab.sum(axis=1).sort_values(ascending=False).index]
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sc = bolha_matriz(ax, crosstab, cmap=CMAP_SEQUENCIAL)
     ax.set_xlabel("ano", fontsize=9, color=_TXT_FRACO)
-    ax.set_ylabel("grupo de pesquisa", fontsize=9, color=_TXT_FRACO)
-    ax.tick_params(labelsize=9)
+    cbar = plt.colorbar(sc, ax=ax, fraction=0.03, pad=0.02)
+    cbar.set_label("publicações (tamanho e cor da bolinha)", fontsize=8)
+    cbar.ax.tick_params(labelsize=7)
     plt.tight_layout()
     save(fig, outdir, "4_heatmap_grupo_ano.png")
 
