@@ -6,7 +6,7 @@ A página ``resources.html`` do C4AI é renderizada por JavaScript: o HTML
 estático não contém as publicações. O ``js/resource.js`` carrega os dados de um
 arquivo **CSV** (delimitado por ``;``) e popula uma tabela DataTables via
 PapaParse. Este script vai direto à fonte — baixa esse CSV — e grava um Excel no
-formato esperado por ``analise_publicacoes`` (uma planilha por grupo, mais uma
+formato esperado por ``analise_publicacoes.py`` (uma planilha por grupo, mais uma
 planilha consolidada ``Planilha1``).
 
 Fontes de dados (descobertas em js/resource.js):
@@ -169,13 +169,13 @@ def parse_publications(csv_text: str) -> pd.DataFrame:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Exportação no formato esperado por analise_publicacoes
+# Exportação no formato esperado por analise_publicacoes.py
 # ──────────────────────────────────────────────────────────────────────────────
 
 def export_excel(df: pd.DataFrame, output: str) -> None:
     """Grava os dados numa única planilha consolidada.
 
-    ``analise_publicacoes`` lê TODAS as planilhas do arquivo e as concatena,
+    ``analise_publicacoes.py`` lê TODAS as planilhas do arquivo e as concatena,
     usando a coluna ``Grupo`` para agrupar. Por isso gravamos apenas uma
     planilha (``Planilha1``): escrever também uma por grupo duplicaria cada
     publicação e dobraria todas as contagens.
@@ -215,7 +215,7 @@ def main():
     df = parse_publications(csv_text)
     print(f"\nExtraídas {len(df)} publicações.")
     export_excel(df, args.output)
-    print("\nConcluído. Agora rode:  python analise_publicacoes --input "
+    print("\nConcluído. Agora rode:  python analise_publicacoes.py --input "
           f"{args.output}")
 
 

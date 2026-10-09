@@ -12,7 +12,7 @@ composição de equipe (equipe_composicao.py), que usa a escala branco -> vermel
 Okabe-Ito.
 
 Fonte dos dados: output/c4ai_matriz_grupo_ano.xlsx (crosstab gerado por
-analise_publicacoes a partir de c4ai_publicacoes.xlsx).
+analise_publicacoes.py a partir de c4ai_publicacoes.xlsx).
 
 Uso:
     python bolhas_publicacoes.py

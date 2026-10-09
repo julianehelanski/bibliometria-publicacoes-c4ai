@@ -56,7 +56,7 @@ Restaram **407 publicações** distribuídas entre **8 grupos**, todas com ano d
 
 ## 2. Inventário de figuras
 
-As figuras a seguir foram geradas automaticamente e estão disponíveis em alta resolução nas pastas [`figuras/`](figuras/) e [`output/`](output/). As figuras 1–9 vêm do *script* `analise_publicacoes`; as figuras 10–11 (co-word analysis) vêm de `coword_analysis.py`.
+As figuras a seguir foram geradas automaticamente e estão disponíveis em alta resolução nas pastas [`figuras/`](figuras/) e [`output/`](output/). As figuras 1–9 vêm do *script* `analise_publicacoes.py`; as figuras 10–11 (co-word analysis) vêm de `coword_analysis.py`.
 
 | # | Arquivo | Tipo de visualização | Seção |
 |---|---|---|---|
@@ -216,4 +216,4 @@ A produção acadêmica do C4AI no período 2020–2024 caracteriza-se por:
 
 ---
 
-*As figuras e os indicadores foram gerados automaticamente pelo script `analise_publicacoes` (Figuras 1–9) e pelo `coword_analysis.py` (Figuras 10–11), a partir da base canônica `c4ai_publicacoes.xlsx`, normalizada por `preparar_base.py` sobre a planilha de curadoria manual. A versão tipografada deste relatório está disponível em [`documento_analise.tex`](documento_analise.tex).*
+*As figuras e os indicadores foram gerados automaticamente pelo script `analise_publicacoes.py` (Figuras 1–9) e pelo `coword_analysis.py` (Figuras 10–11), a partir da base canônica `c4ai_publicacoes.xlsx`, normalizada por `preparar_base.py` sobre a planilha de curadoria manual. A versão tipografada deste relatório está disponível em [`documento_analise.tex`](documento_analise.tex).*
