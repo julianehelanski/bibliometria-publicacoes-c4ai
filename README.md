@@ -182,3 +182,13 @@ Ver [`requirements.txt`](requirements.txt). Requer Python ≥ 3.10.
 ## Contexto
 
 Este script faz parte da pesquisa etnográfica do C4AI (USP) desenvolvida no âmbito do doutorado em Ciências Sociais — IFCH/Unicamp.
+
+## Uso de inteligência artificial generativa
+
+Desenvolvi os *scripts* deste repositório com o Claude Code, a partir das especificações que defini. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. Com ele escrevi e executei a raspagem da base de publicações do C4AI (`scrape_c4ai.py`), a normalização da base, a análise bibliométrica, a rede de co-ocorrência de termos e as figuras. São minhas a curadoria manual das publicações (`c4ai_publicacoes_manual.xlsx`), a contagem das equipes a partir dos relatórios anuais do C4AI à FAPESP (`equipe_composicao.py`) e a interpretação dos resultados no capítulo 3.
+
+**Modelos registrados no histórico de versões:** Claude Sonnet 5, Claude Opus 4.8, Claude Opus 5.5 e Claude Sonnet 5.5 (março a outubro de 2026). Os *commits* mais antigos não registram a versão do modelo.
+
+**Sobre o autor `Claude` e a linha `Co-Authored-By: Claude …` nos *commits*.** Os *commits* com autor `Claude`, ou com essa linha no fim da mensagem, foram feitos em sessões do Claude Code. A marcação é gerada pela própria ferramenta e funciona como registro técnico de rastreabilidade: indica em que pontos do histórico o modelo de linguagem participou do trabalho. A autoria e a responsabilidade pelo conteúdo deste repositório são minhas. Conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras.
+
+A declaração formal de uso de IA generativa da tese, no modelo da Pró-Reitoria de Pós-Graduação da Unicamp, está no [Anexo 1 da tese](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex). Este texto também serve à descrição do depósito no Repositório de Dados de Pesquisa da Unicamp (REDU).
