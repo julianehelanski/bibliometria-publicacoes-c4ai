@@ -16,12 +16,12 @@ A base é a planilha de curadoria manual `c4ai_publicacoes_manual.xlsx` (407 pub
 |---|---|---|---|---|---|
 | capítulo 3 | As publicações acadêmicas do C4AI | `fig:heatmap_grupo` | `figuras/4_heatmap_grupo_ano_bolhas.png` | `bolhas_publicacoes.py` | cópia na tese idêntica à do repositório |
 | capítulo 3 | As publicações acadêmicas do C4AI | `fig:composicao_equipe` | `figuras/12_composicao_equipe_bolhas.png` | `equipe_composicao.py` | cópia na tese idêntica à do repositório |
-| capítulo 3 | As publicações acadêmicas do C4AI | `fig:rede_coword` | `figuras/10_rede_coword.png` | `coword_analysis.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 3 | As publicações acadêmicas do C4AI | `fig:rede_coword_temporal` | `figuras/11_rede_coword_temporal.png` | `coword_analysis.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
+| capítulo 3 | As publicações acadêmicas do C4AI | `fig:rede_coword` | `figuras/10_rede_coword.png` | `coword_analysis.py` | cópia na tese idêntica à do repositório |
+| capítulo 3 | As publicações acadêmicas do C4AI | `fig:rede_coword_temporal` | `figuras/11_rede_coword_temporal.png` | `coword_analysis.py` | cópia na tese idêntica à do repositório |
 
 Correspondência de nomes. A figura `fig:heatmap_grupo` usa na tese o arquivo `figuras/cap.3/bibliometria-c4ai/4_producao_grupo_ano.png`, byte a byte idêntico a `figuras/4_heatmap_grupo_ano_bolhas.png` deste repositório (gerado por `bolhas_publicacoes.py`); a renomeação foi feita só na tese. O heatmap original em escala de cor, `4_heatmap_grupo_ano.png`, não é o usado no texto.
 
-Nota de sincronização. A comparação por hash entre a figura citada na tese e o arquivo homônimo deste repositório aponta divergência quando as duas cópias foram regeneradas ou ajustadas em momentos diferentes (por exemplo, padronização de cor neste repositório e correção de margens no repositório da tese, ambas em junho de 2026). Divergência de hash não indica erro: indica que a figura da tese e a do repositório precisam ser comparadas visualmente e uma delas eleita como versão de referência antes do depósito. O script `atualizar_figuras_tese.sh` (repositório da tese) copia a versão do repositório para a tese pelo nome do arquivo.
+Nota de sincronização. Em 09/10/2026, depois da integração da branch `claude/figure-color-standardization-sgpeb8` (padronização visual feita em junho de 2026 e que não tinha sido mergeada), as figuras deste repositório citadas na tese são byte a byte iguais às cópias em `figuras/` do repositório da tese. O script `atualizar_figuras_tese.sh` (repositório da tese) copia a versão deste repositório para a tese pelo nome do arquivo quando uma figura for regenerada.
 
 ## Material do repositório sem uso direto na tese
 
