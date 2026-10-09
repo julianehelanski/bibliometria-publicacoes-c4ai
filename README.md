@@ -1,5 +1,8 @@
 # C4AI Publications Analysis
 
+> **Uso na tese.** Quais figuras e tabelas da tese (capítulo 3) vêm deste repositório, com o script e os dados de origem de cada uma, estão em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
+
+
 Análise exploratória da produção acadêmica dos grupos de pesquisa do **Centro de Inteligência Artificial da Universidade de São Paulo (C4AI — USP/FAPESP/IBM)**.
 
 **Grupos analisados:** Agribio · AI HEALTH · KEML · MClimate · NLP2 · OceanML · PROINDL · HUMANITIES
@@ -20,8 +23,8 @@ A análise completa, com as onze figuras, legendas e o inventário de visualiza�
 ## Instalação
 
 ```bash
-git clone https://github.com/<usuario>/c4ai-publications.git
-cd c4ai-publications
+git clone https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.git
+cd bibliometria-publicacoes-c4ai
 
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -60,13 +63,13 @@ Com o arquivo `c4ai_publicacoes.xlsx` na raiz do repositório, execute:
 
 ```bash
 # execução padrão — gráficos + tabelas em output/
-python analyze.py
+python analise_publicacoes.py
 
 # especificar arquivo de entrada e pasta de saída
-python analyze.py --input dados/publicacoes.xlsx --output resultados/
+python analise_publicacoes.py --input dados/publicacoes.xlsx --output resultados/
 
 # apenas relatório textual, sem gráficos
-python analyze.py --no-plots
+python analise_publicacoes.py --no-plots
 ```
 
 ### 3. Co-word analysis (rede de co-ocorrência)
@@ -99,7 +102,7 @@ Variante em bolhas do heatmap de publicações, usada no capítulo da tese: mesm
 python bolhas_publicacoes.py
 ```
 
-> Lê `output/c4ai_matriz_grupo_ano.xlsx` (gerado por `analise_publicacoes`). Saída: `4_heatmap_grupo_ano_bolhas.png`.
+> Lê `output/c4ai_matriz_grupo_ano.xlsx` (gerado por `analise_publicacoes.py`). Saída: `4_heatmap_grupo_ano_bolhas.png`.
 
 Saídas em `output/coword/`: `10_rede_coword.png`, `11_rede_coword_temporal.png`, `rede_coword_interativa.html` e tabelas (`coword_arestas.xlsx`, `coword_nos_comunidades.xlsx`, `coword_termos_por_periodo.xlsx`).
 
@@ -116,12 +119,12 @@ Saídas em `output/coword/`: `10_rede_coword.png`, `11_rede_coword_temporal.png`
 ## Estrutura do repositório
 
 ```
-c4ai-publications/
+bibliometria-publicacoes-c4ai/
 ├── scrape_c4ai.py             # coleta automatizada (gera c4ai_publicacoes_py.xlsx)
 ├── c4ai_publicacoes_manual.xlsx  # curadoria manual (fonte oficial, 407 pubs)
 ├── preparar_base.py           # normaliza a curadoria → c4ai_publicacoes.xlsx
 ├── c4ai_publicacoes.xlsx      # base canônica usada pelas análises
-├── analise_publicacoes        # análise bibliométrica principal (Figuras 1–9)
+├── analise_publicacoes.py     # análise bibliométrica principal (Figuras 1–9)
 ├── coword_analysis.py         # co-word analysis / rede de co-ocorrência (Figuras 10–11)
 ├── equipe_composicao.py       # composição de equipe por grupo, curadoria manual (Figura 12)
 ├── bolhas_publicacoes.py      # matriz de bolhas de publicações, variante da Figura 4

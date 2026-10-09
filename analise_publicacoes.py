@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-analyze.py — Análise de Publicações do C4AI (USP)
+analise_publicacoes.py — Análise de Publicações do C4AI (USP)
 ==================================================
 Centro de Inteligência Artificial da Universidade de São Paulo
 Grupos: Agribio · AI HEALTH · KEML · MClimate · NLP2 · OceanML · PROINDL · HUMANITIES
 
 Uso:
-    python analyze.py                          # usa arquivo padrão
-    python analyze.py --input outro.xlsx       # especifica arquivo
-    python analyze.py --output resultados/     # especifica pasta de saída
-    python analyze.py --no-plots               # apenas relatório, sem gráficos
+    python analise_publicacoes.py                          # usa arquivo padrão
+    python analise_publicacoes.py --input outro.xlsx       # especifica arquivo
+    python analise_publicacoes.py --output resultados/     # especifica pasta de saída
+    python analise_publicacoes.py --no-plots               # apenas relatório, sem gráficos
 """
 
 import argparse

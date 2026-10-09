@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Análise bibliométrica das publicações do C4AI"
+message: "Se você usar estes scripts ou dados, por favor cite-os."
+type: software
+abstract: "Base curada, scripts e figuras da análise das publicações do Centro de Inteligência Artificial da USP (capítulo 3 da tese)."
+authors:
+  - family-names: Helanski
+    given-names: Juliane
+    affiliation: "Universidade Estadual de Campinas (Unicamp), Programa de Pós-Graduação em Ciências Sociais"
+repository-code: "https://github.com/julianehelanski/bibliometria-publicacoes-c4ai"
+references:
+  - type: thesis
+    title: "{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora"
+    authors:
+      - family-names: Helanski
+        given-names: Juliane
+    year: 2026
+    repository-code: "https://github.com/julianehelanski/tecno-etnografia-centro-ia"
