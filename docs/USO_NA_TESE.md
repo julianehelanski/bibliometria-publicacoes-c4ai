@@ -21,8 +21,6 @@ A base é a planilha de curadoria manual `c4ai_publicacoes_manual.xlsx` (407 pub
 
 Correspondência de nomes. A figura `fig:heatmap_grupo` usa na tese o arquivo `figuras/cap.3/bibliometria-c4ai/4_producao_grupo_ano.png`, byte a byte idêntico a `figuras/4_heatmap_grupo_ano_bolhas.png` deste repositório (gerado por `bolhas_publicacoes.py`); a renomeação foi feita só na tese. O heatmap original em escala de cor, `4_heatmap_grupo_ano.png`, não é o usado no texto.
 
-Nota de sincronização. Em 09/10/2026, depois da integração da branch `claude/figure-color-standardization-sgpeb8` (padronização visual feita em junho de 2026 e que não tinha sido mergeada), as figuras deste repositório citadas na tese são byte a byte iguais às cópias em `figuras/` do repositório da tese. O script `atualizar_figuras_tese.sh` (repositório da tese) copia a versão deste repositório para a tese pelo nome do arquivo quando uma figura for regenerada.
-
 ## Material do repositório sem uso direto na tese
 
 Das 14 figuras em `figuras/`, 11 não aparecem em `ex_cap*.tex`. As figuras 1 a 9 formam o relatório bibliométrico completo (`RELATORIO.md`, `documento_analise.tex`). A pasta `output/` repete `figuras/` e acrescenta as planilhas geradas pelos scripts.
