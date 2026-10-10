@@ -1,6 +1,6 @@
 # Publicações do C4AI
 
-Este repositório reúne a base de publicações, os *scripts* e as figuras da análise bibliométrica que fiz da produção acadêmica do Centro de Inteligência Artificial da USP (C4AI, parceria USP/FAPESP/IBM) para o capítulo 3, "A rede que Fábio e Cláudio construíram", da minha tese de doutorado, *{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). A análise descreve como a produção se distribui entre os oito grupos de pesquisa do centro (AGRIBIO, AI HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES) e como os grupos e seus temas se deslocam entre 2020 e 2024.
+Este repositório reúne a base de publicações, os *scripts* e as figuras da análise bibliométrica que fiz da produção acadêmica do Centro de Inteligência Artificial da USP (C4AI, parceria USP/FAPESP/IBM) para o capítulo 3, "A rede que Fábio e Cláudio construíram", da minha tese de doutorado, *Tecnografias de um centro de inteligência artificial: seguindo cientistas e engenheiros universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). A análise descreve como a produção se distribui entre os oito grupos de pesquisa do centro (AGRIBIO, AI HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES) e como os grupos e seus temas se deslocam entre 2020 e 2024.
 
 ## O que fiz
 
@@ -65,8 +65,10 @@ Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, fo
 
 ## Citação
 
-> HELANSKI, Juliane. *Publicações do C4AI*: base curada, dados e *scripts*. Campinas: Unicamp, 2026. Disponível em: https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.
+> CARDOSO, Juliane Cristina Helanski. *Publicações do C4AI*: base curada, dados e *scripts*. Campinas: Unicamp, 2026. Disponível em: https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.
 
-> HELANSKI, Juliane. *{tecnografia} de um centro de inteligência artificial*: seguindo cientistas e engenheiros, universidade afora. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
+> CARDOSO, Juliane Cristina Helanski. *Tecnografias de um centro de inteligência artificial*: seguindo cientistas e engenheiros universidade afora. Orientadora: Maria Suely Kofes. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
+
+ORCID da autora: https://orcid.org/0000-0001-8649-8986.
 
 Metadados de citação em [`CITATION.cff`](CITATION.cff).

@@ -4,15 +4,22 @@ message: "Se você usar estes scripts ou dados, por favor cite-os."
 type: software
 abstract: "Base curada, scripts e figuras da análise das publicações do Centro de Inteligência Artificial da USP (capítulo 3 da tese)."
 authors:
-  - family-names: Helanski
-    given-names: Juliane
+  - family-names: Cardoso
+    given-names: Juliane Cristina Helanski
+    orcid: "https://orcid.org/0000-0001-8649-8986"
     affiliation: "Universidade Estadual de Campinas (Unicamp), Programa de Pós-Graduação em Ciências Sociais"
 repository-code: "https://github.com/julianehelanski/bibliometria-publicacoes-c4ai"
 references:
   - type: thesis
-    title: "{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora"
+    title: "Tecnografias de um centro de inteligência artificial: seguindo cientistas e engenheiros universidade afora"
     authors:
-      - family-names: Helanski
-        given-names: Juliane
+      - family-names: Cardoso
+        given-names: Juliane Cristina Helanski
+        orcid: "https://orcid.org/0000-0001-8649-8986"
+    thesis-type: "Tese (Doutorado em Ciências Sociais)"
+    institution:
+      name: "Universidade Estadual de Campinas (Unicamp), Instituto de Filosofia e Ciências Humanas"
+      city: Campinas
+      country: BR
     year: 2026
     repository-code: "https://github.com/julianehelanski/tecno-etnografia-centro-ia"
