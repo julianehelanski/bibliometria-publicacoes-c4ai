@@ -8,6 +8,9 @@ authors:
     given-names: Juliane Cristina Helanski
     orcid: "https://orcid.org/0000-0001-8649-8986"
     affiliation: "Universidade Estadual de Campinas (Unicamp), Programa de Pós-Graduação em Ciências Sociais"
+license:
+  - MIT
+  - CC-BY-4.0
 repository-code: "https://github.com/julianehelanski/bibliometria-publicacoes-c4ai"
 references:
   - type: thesis

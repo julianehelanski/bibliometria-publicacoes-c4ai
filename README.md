@@ -63,6 +63,10 @@ Fiz os *scripts* deste repositório com o Claude Code, a partir das especificaç
 
 Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, foram feitos em sessões do Claude Code; a marcação é gerada pela ferramenta e registra em que pontos do histórico o modelo participou do trabalho. A autoria e a responsabilidade pelo conteúdo são minhas e, conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras. A declaração formal de uso de IA generativa da tese está no [Anexo 1](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex).
 
+## Licença
+
+Código sob licença [MIT](LICENSE); base curada, planilhas, relatório e figuras que produzi sob [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.pt-br), conforme [`LICENSE-DADOS.md`](LICENSE-DADOS.md). Os metadados das publicações vêm da lista pública do site do C4AI.
+
 ## Citação
 
 > CARDOSO, Juliane Cristina Helanski. *Publicações do C4AI*: base curada, dados e *scripts*. Campinas: Unicamp, 2026. Disponível em: https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.
