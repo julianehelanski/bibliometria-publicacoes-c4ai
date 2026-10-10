@@ -1,6 +1,6 @@
 # Uso deste repositório na tese
 
-Documento gerado em 09/10/2026 a partir da leitura dos arquivos `ex_cap*.tex` do repositório da tese (`julianehelanski/tecno-etnografia-centro-ia`, commit 3f0f671 (2026-10-08)). Repositório descrito: `julianehelanski/bibliometria-publicacoes-c4ai`. A versão tabular está em `docs/uso_na_tese.csv`.
+Documento gerado em 09/10/2026 a partir da leitura dos arquivos `ex_cap*.tex` da tese (versão de 08/10/2026). Repositório descrito: `julianehelanski/bibliometria-publicacoes-c4ai`. A versão tabular está em `docs/uso_na_tese.csv`.
 
 ## Onde entra na tese
 
