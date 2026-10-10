@@ -1,194 +1,72 @@
-# C4AI Publications Analysis
+# Publicações do C4AI
 
-> **Uso na tese.** Quais figuras e tabelas da tese (capítulo 3) vêm deste repositório, com o script e os dados de origem de cada uma, estão em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
+Este repositório reúne a base de publicações, os *scripts* e as figuras da análise bibliométrica que fiz da produção acadêmica do Centro de Inteligência Artificial da USP (C4AI, parceria USP/FAPESP/IBM) para o capítulo 3, "A rede que Fábio e Cláudio construíram", da minha tese de doutorado, *{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). A análise descreve como a produção se distribui entre os oito grupos de pesquisa do centro (AGRIBIO, AI HEALTH, KEML, MClimate, NLP2, OceanML, PROINDL e HUMANITIES) e como os grupos e seus temas se deslocam entre 2020 e 2024.
 
+## O que fiz
 
-Análise exploratória da produção acadêmica dos grupos de pesquisa do **Centro de Inteligência Artificial da Universidade de São Paulo (C4AI — USP/FAPESP/IBM)**.
+- **Base de publicações.** Montei por curadoria manual a base de 407 publicações do centro (`c4ai_publicacoes_manual.xlsx`), a partir da lista publicada no site do C4AI, com títulos limpos e autores em coluna própria. `preparar_base.py` normaliza a planilha para `c4ai_publicacoes.xlsx`, a base lida pelas análises. A coleta automatizada do site (`scrape_c4ai.py`, 413 registros) fica como fonte de conferência.
+- **Composição das equipes.** Contei, nos relatórios anuais do C4AI à FAPESP (2021 a 2025), o total de pesquisadores de cada grupo por ano. Os valores e as notas sobre casos ambíguos estão no próprio *script* `equipe_composicao.py`.
+- **Análises.** Ranking e participação por grupo, evolução anual, produtividade, concentração (índice Herfindahl-Hirschman), matriz grupo por ano e rede de co-ocorrência de termos dos títulos, com detecção de comunidades e leitura por período.
 
-**Grupos analisados:** Agribio · AI HEALTH · KEML · MClimate · NLP2 · OceanML · PROINDL · HUMANITIES
+Resultados gerais: 407 publicações de oito grupos entre 2020 e 2024; o NLP2 responde por 144 delas (35,4%); os três maiores grupos somam 62,7%; o pico anual é 2023, com 189 publicações; o HHI é 1995 (concentração moderada). O relatório completo, com as treze figuras, está em [`RELATORIO.md`](RELATORIO.md) e na versão LaTeX [`documento_analise.tex`](documento_analise.tex).
 
----
+## O que entra na tese
 
-## 📊 Relatório
+No capítulo 3, subseção "As publicações acadêmicas do C4AI", entram quatro figuras:
 
-A análise completa, com as onze figuras, legendas e o inventário de visualizações, está disponível em:
+| Figura na tese | Arquivo | *Script* |
+|---|---|---|
+| publicações por grupo e ano (matriz de bolhas) | `figuras/4_heatmap_grupo_ano_bolhas.png` | `bolhas_publicacoes.py` |
+| composição das equipes por grupo e ano | `figuras/12_composicao_equipe_bolhas.png` | `equipe_composicao.py` |
+| rede de co-ocorrência de termos | `figuras/10_rede_coword.png` | `coword_analysis.py` |
+| rede de co-ocorrência por período | `figuras/11_rede_coword_temporal.png` | `coword_analysis.py` |
 
-- **[`RELATORIO.md`](RELATORIO.md)** — relatório bibliométrico em Markdown (renderiza direto no GitHub), com inventário de figuras.
-- **[`documento_analise.tex`](documento_analise.tex)** — versão tipografada em LaTeX (compilar com `pdflatex documento_analise.tex`).
+Na tese, a primeira figura tem o nome `4_producao_grupo_ano.png` e é idêntica a `4_heatmap_grupo_ano_bolhas.png`. A correspondência figura a figura está em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
 
-**Resumo:** 407 publicações (curadoria manual) · 8 grupos · 2020–2024 · líder NLP2 (144 pubs) · pico em 2023 (189) · HHI 1995 (moderado).
-
----
-
-## Instalação
+## Como reproduzir
 
 ```bash
 git clone https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.git
 cd bibliometria-publicacoes-c4ai
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt          # Python 3.10+
 
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-
-pip install -r requirements.txt
+python preparar_base.py          # curadoria manual -> c4ai_publicacoes.xlsx
+python analise_publicacoes.py    # figuras 1 a 9 e planilhas em output/
+python bolhas_publicacoes.py     # matriz de bolhas (figura da tese)
+python equipe_composicao.py      # composição das equipes
+python coword_analysis.py        # rede de co-ocorrência (saídas em output/coword/)
 ```
 
----
+`analise_publicacoes.py` aceita `--input`, `--output` e `--no-plots`. A rede de co-ocorrência usa os títulos, porque a base não traz resumos; `enrich_metadata.py` busca resumos e palavras-chave no OpenAlex para uma versão enriquecida (`coword_analysis.py --input c4ai_publicacoes_enriquecido.xlsx`), que não entra na tese.
 
-## Uso
-
-### 1. Coleta dos dados (scraper)
-
-Baixa as publicações diretamente da base oficial do C4AI e gera o `c4ai_publicacoes_py.xlsx`:
-
-```bash
-python scrape_c4ai.py                 # coleta em português (padrão)
-python scrape_c4ai.py --lang en       # versão em inglês
-```
-
-> O scraper acessa `resources/publicacoes.csv` (carregado dinamicamente pela página), consolida as variantes do grupo de saúde sob `AI HEALTH` e grava cada publicação uma única vez.
-
-### 1b. Base oficial (curadoria manual)
-
-A fonte **oficial** das análises é a planilha de curadoria manual `c4ai_publicacoes_manual.xlsx` (títulos limpos, autores em coluna separada). O *script* `preparar_base.py` a normaliza para o schema canônico `c4ai_publicacoes.xlsx` (consolida as variantes de `AI HEALTH` e corrige 2 registros com grupo deslocado):
-
-```bash
-python preparar_base.py        # gera c4ai_publicacoes.xlsx (407 publicações)
-```
-
-> A coleta automatizada (`scrape_c4ai.py` → `c4ai_publicacoes_py.xlsx`, 413 pubs) permanece disponível como fonte alternativa/independente.
-
-### 2. Análise
-
-Com o arquivo `c4ai_publicacoes.xlsx` na raiz do repositório, execute:
-
-```bash
-# execução padrão — gráficos + tabelas em output/
-python analise_publicacoes.py
-
-# especificar arquivo de entrada e pasta de saída
-python analise_publicacoes.py --input dados/publicacoes.xlsx --output resultados/
-
-# apenas relatório textual, sem gráficos
-python analise_publicacoes.py --no-plots
-```
-
-### 3. Co-word analysis (rede de co-ocorrência)
-
-Extrai os termos das publicações, calcula a co-ocorrência e mapeia os temas (comunidades) e seu deslocamento no tempo:
-
-```bash
-python coword_analysis.py                         # rede + figuras + HTML interativo
-python coword_analysis.py --min-term-freq 5       # ajusta os limiares
-python coword_analysis.py --no-html               # só PNG
-```
-
-> Os termos são extraídos dos **títulos** (a base oficial não traz abstracts/keywords). Para uma co-word mais fiel ao método, enriqueça antes a base com `enrich_metadata.py` (busca abstracts/keywords no OpenAlex — requer internet) e rode `coword_analysis.py --input c4ai_publicacoes_enriquecido.xlsx`.
-
-### 4. Composição de equipe (bolha grupo × ano)
-
-Figura-par do heatmap de publicações (Figura 4): mesma grade grupo × ano, com o tamanho e a cor da bolha indicando o total de pesquisadores por grupo (escala sequencial branco-vermelho, ancorada no vermelho Okabe-Ito, não viridis), a partir da curadoria manual dos relatórios anuais do C4AI à FAPESP (2021–2025):
-
-```bash
-python equipe_composicao.py
-```
-
-> Dados embutidos no próprio script (`TOTAIS`), com notas metodológicas para células que agregam mais de uma frente de pesquisa ou apresentam divergência entre o relatório e a contagem nominal. Saída: `12_composicao_equipe_bolhas.png`, `13_composicao_equipe_streamgraph.png` (forma alternativa/não convencional dos mesmos dados) e `c4ai_composicao_equipe.xlsx` (tabela + notas).
-
-### 5. Matriz de bolhas de publicações (variante da Figura 4)
-
-Variante em bolhas do heatmap de publicações, usada no capítulo da tese: mesma grade grupo × ano, com o tamanho e a cor da bolha indicando o número de publicações (escala sequencial branco-azul, ancorada no azul Okabe-Ito, não viridis — matiz distinto do usado na Figura 12, para diferenciar as duas matrizes):
-
-```bash
-python bolhas_publicacoes.py
-```
-
-> Lê `output/c4ai_matriz_grupo_ano.xlsx` (gerado por `analise_publicacoes.py`). Saída: `4_heatmap_grupo_ano_bolhas.png`.
-
-Saídas em `output/coword/`: `10_rede_coword.png`, `11_rede_coword_temporal.png`, `rede_coword_interativa.html` e tabelas (`coword_arestas.xlsx`, `coword_nos_comunidades.xlsx`, `coword_termos_por_periodo.xlsx`).
-
-### Argumentos
-
-| Argumento     | Padrão                       | Descrição                        |
-|---------------|------------------------------|----------------------------------|
-| `--input`     | `c4ai_publicacoes.xlsx`      | Arquivo Excel de entrada         |
-| `--output`    | `output/`                    | Pasta onde os arquivos são salvos |
-| `--no-plots`  | (flag)                       | Omite a geração de gráficos      |
-
----
-
-## Estrutura do repositório
+## Estrutura
 
 ```
-bibliometria-publicacoes-c4ai/
-├── scrape_c4ai.py             # coleta automatizada (gera c4ai_publicacoes_py.xlsx)
-├── c4ai_publicacoes_manual.xlsx  # curadoria manual (fonte oficial, 407 pubs)
-├── preparar_base.py           # normaliza a curadoria → c4ai_publicacoes.xlsx
-├── c4ai_publicacoes.xlsx      # base canônica usada pelas análises
-├── analise_publicacoes.py     # análise bibliométrica principal (Figuras 1–9)
-├── coword_analysis.py         # co-word analysis / rede de co-ocorrência (Figuras 10–11)
-├── equipe_composicao.py       # composição de equipe por grupo, curadoria manual (Figura 12)
-├── bolhas_publicacoes.py      # matriz de bolhas de publicações, variante da Figura 4
-├── enrich_metadata.py         # enriquecimento opcional via OpenAlex (abstracts/keywords)
-├── documento_analise.tex      # relatório em LaTeX
-├── RELATORIO.md               # relatório em Markdown (com inventário de figuras)
-├── requirements.txt
-├── .gitignore
-├── README.md
-├── figuras/                   # figuras usadas no relatório (1–13)
-└── output/                    # gerado automaticamente pelas análises
-    ├── 1_ranking_grupos.png … 9_analise_concentracao.png
-    ├── 12_composicao_equipe_bolhas.png
-    ├── 13_composicao_equipe_streamgraph.png
-    ├── c4ai_dados_completos_limpo.xlsx
-    ├── c4ai_produtividade_todos_grupos.xlsx
-    ├── c4ai_matriz_grupo_ano.xlsx
-    ├── c4ai_resumo_grupos.xlsx
-    ├── c4ai_composicao_equipe.xlsx
-    ├── c4ai_relatorio_executivo.txt
-    └── coword/                # saídas da co-word (PNGs, HTML interativo, tabelas)
+c4ai_publicacoes_manual.xlsx   curadoria manual (fonte das análises)
+c4ai_publicacoes.xlsx          base normalizada
+c4ai_publicacoes_py.xlsx       coleta automatizada, para conferência
+preparar_base.py, scrape_c4ai.py, enrich_metadata.py
+analise_publicacoes.py, bolhas_publicacoes.py, equipe_composicao.py, coword_analysis.py
+estilo_c4ai.py                 estilo comum das figuras
+RELATORIO.md, documento_analise.tex
+figuras/                       figuras 1 a 13
+output/                        figuras e planilhas geradas pelos scripts
+docs/                          uso na tese
 ```
-
----
-
-## Formato esperado do arquivo Excel
-
-O arquivo deve ter uma planilha por grupo (Planilha1–Planilha8) com pelo menos as colunas:
-
-| Coluna                  | Descrição                            |
-|-------------------------|--------------------------------------|
-| `Grupo de Pesquisa`     | Nome do grupo                        |
-| `Data de publicação`    | Ano (numérico ou texto)              |
-| `Título`                | Título da publicação                 |
-| `Autores` *(opcional)*  | Lista separada por `;`               |
-
----
-
-## Análises geradas
-
-- Ranking e distribuição proporcional por grupo
-- Evolução temporal anual (barras, linhas, heatmap, barras empilhadas)
-- Taxa de produtividade (publicações/ano) e comparativo entre grupos
-- Índice de concentração Herfindahl–Hirschman (HHI) e curva de Lorenz
-- Relatório executivo em texto com principais indicadores
-
----
-
-## Dependências
-
-Ver [`requirements.txt`](requirements.txt). Requer Python ≥ 3.10.
-
----
-
-## Contexto
-
-Este script faz parte da pesquisa etnográfica do C4AI (USP) desenvolvida no âmbito do doutorado em Ciências Sociais — IFCH/Unicamp.
 
 ## Uso de inteligência artificial generativa
 
-Desenvolvi os *scripts* deste repositório com o Claude Code, a partir das especificações que defini. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. Com ele escrevi e executei a raspagem da base de publicações do C4AI (`scrape_c4ai.py`), a normalização da base, a análise bibliométrica, a rede de co-ocorrência de termos e as figuras. São minhas a curadoria manual das publicações (`c4ai_publicacoes_manual.xlsx`), a contagem das equipes a partir dos relatórios anuais do C4AI à FAPESP (`equipe_composicao.py`) e a interpretação dos resultados no capítulo 3.
+Fiz os *scripts* deste repositório com o Claude Code, a partir das especificações que defini. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. Com ele escrevi e executei a raspagem do site do C4AI, a normalização da base, a análise bibliométrica, a rede de co-ocorrência e as figuras. São minhas a curadoria manual das publicações, a contagem das equipes nos relatórios anuais do C4AI à FAPESP e a interpretação dos resultados no capítulo 3.
 
 **Modelos registrados no histórico de versões:** Claude Sonnet 5, Claude Opus 4.8, Claude Opus 5.5 e Claude Sonnet 5.5 (março a outubro de 2026). Os *commits* mais antigos não registram a versão do modelo.
 
-**Sobre o autor `Claude` e a linha `Co-Authored-By: Claude …` nos *commits*.** Os *commits* com autor `Claude`, ou com essa linha no fim da mensagem, foram feitos em sessões do Claude Code. A marcação é gerada pela própria ferramenta e funciona como registro técnico de rastreabilidade: indica em que pontos do histórico o modelo de linguagem participou do trabalho. A autoria e a responsabilidade pelo conteúdo deste repositório são minhas. Conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras.
+Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, foram feitos em sessões do Claude Code; a marcação é gerada pela ferramenta e registra em que pontos do histórico o modelo participou do trabalho. A autoria e a responsabilidade pelo conteúdo são minhas e, conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras. A declaração formal de uso de IA generativa da tese está no [Anexo 1](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex).
 
-A declaração formal de uso de IA generativa da tese, no modelo da Pró-Reitoria de Pós-Graduação da Unicamp, está no [Anexo 1 da tese](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex). Este texto também serve à descrição do depósito no Repositório de Dados de Pesquisa da Unicamp (REDU).
+## Citação
+
+> HELANSKI, Juliane. *Publicações do C4AI*: base curada, dados e *scripts*. Campinas: Unicamp, 2026. Disponível em: https://github.com/julianehelanski/bibliometria-publicacoes-c4ai.
+
+> HELANSKI, Juliane. *{tecnografia} de um centro de inteligência artificial*: seguindo cientistas e engenheiros, universidade afora. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
+
+Metadados de citação em [`CITATION.cff`](CITATION.cff).
