@@ -12,6 +12,12 @@ license:
   - MIT
   - CC-BY-SA-4.0
 repository-code: "https://github.com/julianehelanski/bibliometria-publicacoes-c4ai"
+keywords:
+  - bibliometria
+  - inteligência artificial
+  - C4AI
+  - cienciometria
+  - estudos de ciência e tecnologia
 references:
   - type: thesis
     title: "Tecnografias de um centro de inteligência artificial: seguindo cientistas e engenheiros universidade afora"

@@ -5,3 +5,5 @@ O código deste repositório está sob a licença MIT (arquivo [`LICENSE`](LICEN
 ## Exceções
 
 - Os títulos, autores e anos das publicações vêm da lista pública do site do C4AI; os totais de pesquisadores vêm dos relatórios anuais do C4AI à FAPESP.
+
+Texto legal da licença CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/legalcode.pt

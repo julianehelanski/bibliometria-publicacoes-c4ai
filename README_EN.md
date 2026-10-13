@@ -12,7 +12,7 @@ This repository is part of the dataset *Ethnography of an artificial intelligenc
 
 ## Licenses
 
-Code: MIT (LICENSE). Curated base, spreadsheets, report and figures I produced: CC BY-SA 4.0 (LICENSE-DADOS.md).
+Code: MIT (LICENSE). Curated base, spreadsheets, report and figures I produced: CC BY-SA 4.0 (LICENSE-DADOS.md). CC BY-SA 4.0 legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode.
 
 ## How to cite
 
