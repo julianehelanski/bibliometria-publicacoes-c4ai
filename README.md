@@ -65,7 +65,7 @@ Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, fo
 
 ## Licença
 
-Código sob licença [MIT](LICENSE); base curada, planilhas, relatório e figuras que produzi sob [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.pt-br), conforme [`LICENSE-DADOS.md`](LICENSE-DADOS.md). Os metadados das publicações vêm da lista pública do site do C4AI.
+Código sob licença [MIT](LICENSE); base curada, planilhas, relatório e figuras que produzi sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br), conforme [`LICENSE-DADOS.md`](LICENSE-DADOS.md). Os metadados das publicações vêm da lista pública do site do C4AI.
 
 ## Citação
 

@@ -10,7 +10,7 @@ authors:
     affiliation: "Universidade Estadual de Campinas (Unicamp), Programa de Pós-Graduação em Ciências Sociais"
 license:
   - MIT
-  - CC-BY-4.0
+  - CC-BY-SA-4.0
 repository-code: "https://github.com/julianehelanski/bibliometria-publicacoes-c4ai"
 references:
   - type: thesis
